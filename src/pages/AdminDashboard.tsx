@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth"; // Make sure role is provided
 
-import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminStats from "@/components/admin/AdminStats";
@@ -11,11 +13,23 @@ import AdminSystemSettings from "@/components/admin/AdminSystemSettings";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const { user, role } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect if not admin
+  useEffect(() => {
+    if (role !== "admin") {
+      navigate("/dashboard");
+    }
+  }, [role, navigate]);
+
+  // Optional loading state
+  if (!user || !role) return <p className="p-4">Checking access...</p>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
       <AdminHeader />
-      
+
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
