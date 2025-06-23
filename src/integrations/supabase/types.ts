@@ -375,13 +375,60 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activate_package: {
+        Args: { p_package_id: string; p_referred_by_code?: string }
+        Returns: Json
+      }
+      admin_process_withdrawal: {
+        Args: { p_withdrawal_id: string; p_action: string; p_notes?: string }
+        Returns: Json
+      }
+      distribute_daily_roi: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       generate_referral_code: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
       get_user_role: {
-        Args: { user_id: string }
+        Args: Record<PropertyKey, never> | { user_id: string }
         Returns: string
+      }
+      get_wallet_history: {
+        Args: { p_user_id?: string; p_limit?: number; p_offset?: number }
+        Returns: {
+          id: string
+          type: Database["public"]["Enums"]["transaction_type"]
+          amount: number
+          status: Database["public"]["Enums"]["transaction_status"]
+          description: string
+          created_at: string
+        }[]
+      }
+      process_referral_commissions: {
+        Args: {
+          p_new_user_id: string
+          p_referrer_id: string
+          p_package_amount: number
+        }
+        Returns: undefined
+      }
+      request_withdrawal: {
+        Args: {
+          p_amount: number
+          p_payment_method: Database["public"]["Enums"]["payment_method"]
+          p_payment_details: Json
+        }
+        Returns: Json
+      }
+      rpc_activate_package: {
+        Args: { package_id: string; referral_code?: string }
+        Returns: Json
+      }
+      rpc_request_withdrawal: {
+        Args: { amount: number; payment_method: string; payment_details: Json }
+        Returns: Json
       }
     }
     Enums: {
