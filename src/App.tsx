@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,21 +20,30 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={
-              <AuthGuard requireAuth={false}>
-                <Index />
-              </AuthGuard>
-            } />
-            <Route path="/dashboard" element={
-              <AuthGuard requireAuth={true}>
-                <Dashboard />
-              </AuthGuard>
-            } />
-            <Route path="/admin" element={
-              <AuthGuard requireAuth={true}>
-                <AdminDashboard />
-              </AuthGuard>
-            } />
+            <Route
+              path="/"
+              element={
+                <AuthGuard requireAuth={false}>
+                  <Index />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <AuthGuard requireAuth={true}>
+                  <Dashboard />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <AuthGuard requireAuth={true} requireAdmin={true}>
+                  <AdminDashboard />
+                </AuthGuard>
+              }
+            />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
