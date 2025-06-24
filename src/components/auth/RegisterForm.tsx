@@ -6,85 +6,152 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
-interface RegisterFormProps {
-  onSuccess?: () => void;
-}
-
-const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+const RegisterForm = () => {
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    mobile: "",
+    country: "",
+    city: "",
+    password: "",
+    confirmPassword: "",
+    referralCode: ""
+  });
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuth();
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      return;
+    }
+
     setLoading(true);
 
     const userData = {
-      first_name: firstName,
-      last_name: lastName,
-      full_name: `${firstName} ${lastName}`
+      full_name: formData.fullName,
+      mobile: formData.mobile,
+      country: formData.country,
+      city: formData.city,
+      referral_code: formData.referralCode
     };
 
-    const { error } = await signUp(email, password, userData);
-    
-    if (!error) {
-      onSuccess?.();
-    }
+    const { error } = await signUp(formData.email, formData.password, userData);
     
     setLoading(false);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="firstName">First Name</Label>
+          <Label htmlFor="fullName">Full Name</Label>
           <Input
-            id="firstName"
-            type="text"
-            placeholder="Enter your first name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            id="fullName"
+            name="fullName"
+            placeholder="Enter your full name"
+            value={formData.fullName}
+            onChange={handleChange}
             required
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="lastName">Last Name</Label>
+          <Label htmlFor="mobile">Mobile Number</Label>
           <Input
-            id="lastName"
-            type="text"
-            placeholder="Enter your last name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            id="mobile"
+            name="mobile"
+            placeholder="Enter your mobile"
+            value={formData.mobile}
+            onChange={handleChange}
             required
           />
         </div>
       </div>
+      
       <div className="space-y-2">
-        <Label htmlFor="register-email">Email</Label>
+        <Label htmlFor="email">Email</Label>
         <Input
-          id="register-email"
+          id="email"
+          name="email"
           type="email"
           placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formData.email}
+          onChange={handleChange}
           required
         />
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="country">Country</Label>
+          <Input
+            id="country"
+            name="country"
+            placeholder="Enter your country"
+            value={formData.country}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="city">City</Label>
+          <Input
+            id="city"
+            name="city"
+            placeholder="Enter your city"
+            value={formData.city}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      </div>
+
       <div className="space-y-2">
-        <Label htmlFor="register-password">Password</Label>
+        <Label htmlFor="referralCode">Referral Code (Optional)</Label>
         <Input
-          id="register-password"
-          type="password"
-          placeholder="Create a password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+          id="referralCode"
+          name="referralCode"
+          placeholder="Enter referral code if you have one"
+          value={formData.referralCode}
+          onChange={handleChange}
         />
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            placeholder="Confirm your password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      </div>
+
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? (
           <>
