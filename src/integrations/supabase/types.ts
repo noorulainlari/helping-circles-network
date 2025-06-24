@@ -313,6 +313,21 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          role: string
+          user_id: string
+        }
+        Insert: {
+          role: string
+          user_id: string
+        }
+        Update: {
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       withdrawals: {
         Row: {
           admin_notes: string | null
@@ -392,7 +407,7 @@ export type Database = {
         Returns: string
       }
       get_user_role: {
-        Args: Record<PropertyKey, never> | { user_id: string }
+        Args: { p_user_id?: string }
         Returns: string
       }
       get_wallet_history: {

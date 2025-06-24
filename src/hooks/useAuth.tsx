@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui/use-toast';
 interface AuthContextType {
   user: User | null;
   session: Session | null;
+  role: string | null;
   loading: boolean;
   signUp: (email: string, password: string, userData: any) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
@@ -18,24 +19,59 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+
+  const fetchUserRole = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .rpc('get_user_role', { p_user_id: userId });
+      
+      if (error) {
+        console.error('Error fetching user role:', error);
+        return 'user';
+      }
+      
+      return data || 'user';
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+      return 'user';
+    }
+  };
 
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         console.log('Auth state changed:', event, session);
         setSession(session);
         setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          // Fetch user role when user is authenticated
+          const userRole = await fetchUserRole(session.user.id);
+          setRole(userRole);
+        } else {
+          setRole(null);
+        }
+        
         setLoading(false);
       }
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      
+      if (session?.user) {
+        const userRole = await fetchUserRole(session.user.id);
+        setRole(userRole);
+      } else {
+        setRole(null);
+      }
+      
       setLoading(false);
     });
 
@@ -112,6 +148,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     <AuthContext.Provider value={{
       user,
       session,
+      role,
       loading,
       signUp,
       signIn,

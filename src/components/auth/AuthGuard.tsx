@@ -6,10 +6,11 @@ import { useEffect } from 'react';
 interface AuthGuardProps {
   children: React.ReactNode;
   requireAuth?: boolean;
+  requireAdmin?: boolean;
 }
 
-const AuthGuard = ({ children, requireAuth = true }: AuthGuardProps) => {
-  const { user, loading } = useAuth();
+const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }: AuthGuardProps) => {
+  const { user, role, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,10 +18,17 @@ const AuthGuard = ({ children, requireAuth = true }: AuthGuardProps) => {
       if (requireAuth && !user) {
         navigate('/');
       } else if (!requireAuth && user) {
+        // Redirect authenticated users to appropriate dashboard
+        if (role === 'admin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
+      } else if (requireAdmin && role !== 'admin') {
         navigate('/dashboard');
       }
     }
-  }, [user, loading, requireAuth, navigate]);
+  }, [user, role, loading, requireAuth, requireAdmin, navigate]);
 
   if (loading) {
     return (
@@ -38,6 +46,10 @@ const AuthGuard = ({ children, requireAuth = true }: AuthGuardProps) => {
   }
 
   if (!requireAuth && user) {
+    return null;
+  }
+
+  if (requireAdmin && role !== 'admin') {
     return null;
   }
 

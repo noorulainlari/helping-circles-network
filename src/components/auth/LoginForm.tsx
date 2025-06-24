@@ -6,7 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
-const LoginForm = () => {
+interface LoginFormProps {
+  onSuccess?: () => void;
+}
+
+const LoginForm = ({ onSuccess }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,7 +23,7 @@ const LoginForm = () => {
     const { error } = await signIn(email, password);
     
     if (!error) {
-      // Navigation will be handled by AuthGuard
+      onSuccess?.();
     }
     
     setLoading(false);
