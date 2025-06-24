@@ -3,280 +3,222 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Filter, CheckCircle, XCircle, Clock, ArrowDownLeft } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { CheckCircle, XCircle, Eye, Clock, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const WithdrawalManagement = () => {
   const { toast } = useToast();
+  const [selectedWithdrawal, setSelectedWithdrawal] = useState<any>(null);
+  const [adminNotes, setAdminNotes] = useState("");
+
+  // Mock data - replace with real API calls
   const [withdrawals, setWithdrawals] = useState([
     {
-      id: "W001",
-      userId: "AB1234",
-      userName: "John Doe",
-      amount: 1000,
-      method: "UPI",
-      details: "john@okhdfcbank",
+      id: "1",
+      user: { name: "John Doe", email: "john@example.com", id: "AB1234" },
+      amount: 5000,
+      method: "bank_transfer",
+      details: { account: "****1234", bank: "State Bank" },
       status: "pending",
-      requestDate: "2024-01-20",
-      assignedTo: "CD5678 (Jane Smith)",
+      requestedAt: "2024-01-20 10:30 AM",
+      proofUrl: "/proof1.jpg"
     },
     {
-      id: "W002", 
-      userId: "EF9012",
-      userName: "Mike Johnson",
-      amount: 500,
-      method: "Bank Transfer",
-      details: "HDFC Bank - 123456789",
-      status: "completed",
-      requestDate: "2024-01-18",
-      assignedTo: "GH3456 (Sarah Wilson)",
-    },
-    {
-      id: "W003",
-      userId: "CD5678",
-      userName: "Jane Smith", 
-      amount: 750,
-      method: "Google Pay",
-      details: "9876543210",
+      id: "2", 
+      user: { name: "Jane Smith", email: "jane@example.com", id: "CD5678" },
+      amount: 2500,
+      method: "upi",
+      details: { upi: "jane@paytm" },
       status: "pending",
-      requestDate: "2024-01-21",
-      assignedTo: "Waiting for assignment",
-    },
+      requestedAt: "2024-01-20 09:15 AM",
+      proofUrl: null
+    }
   ]);
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "pending":
-        return <Clock className="w-4 h-4 text-orange-500" />;
-      case "completed":
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case "rejected":
-        return <XCircle className="w-4 h-4 text-red-500" />;
-      default:
-        return <Clock className="w-4 h-4 text-gray-500" />;
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "pending":
-        return <Badge className="bg-orange-100 text-orange-800">Pending</Badge>;
-      case "completed":
-        return <Badge className="bg-green-100 text-green-800">Completed</Badge>;
-      case "rejected":
-        return <Badge className="bg-red-100 text-red-800">Rejected</Badge>;
-      default:
-        return <Badge className="bg-gray-100 text-gray-800">Unknown</Badge>;
-    }
-  };
 
   const handleApprove = (withdrawalId: string) => {
     setWithdrawals(prev => 
-      prev.map(w => 
-        w.id === withdrawalId 
-          ? { ...w, status: "completed" }
-          : w
-      )
+      prev.map(w => w.id === withdrawalId ? { ...w, status: "completed" } : w)
     );
     toast({
       title: "Withdrawal Approved",
-      description: `Withdrawal ${withdrawalId} has been approved successfully`,
+      description: "The withdrawal has been approved and processed.",
     });
   };
 
   const handleReject = (withdrawalId: string) => {
     setWithdrawals(prev => 
-      prev.map(w => 
-        w.id === withdrawalId 
-          ? { ...w, status: "rejected" }
-          : w
-      )
+      prev.map(w => w.id === withdrawalId ? { ...w, status: "rejected" } : w)
     );
     toast({
       title: "Withdrawal Rejected",
-      description: `Withdrawal ${withdrawalId} has been rejected`,
+      description: "The withdrawal has been rejected and funds returned.",
       variant: "destructive",
     });
   };
 
-  const pendingWithdrawals = withdrawals.filter(w => w.status === "pending");
-  const totalPendingAmount = pendingWithdrawals.reduce((sum, w) => sum + w.amount, 0);
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "pending":
+        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="w-3 h-3 mr-1" />Pending</Badge>;
+      case "completed":
+        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1" />Completed</Badge>;
+      case "rejected":
+        return <Badge className="bg-red-100 text-red-800"><XCircle className="w-3 h-3 mr-1" />Rejected</Badge>;
+      default:
+        return <Badge className="bg-gray-100 text-gray-800">Unknown</Badge>;
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Withdrawal Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="border-l-4 border-l-orange-500">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Pending Requests</p>
-                <p className="text-2xl font-bold">{pendingWithdrawals.length}</p>
-              </div>
-              <Clock className="w-8 h-8 text-orange-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-red-500">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Pending Amount</p>
-                <p className="text-2xl font-bold">₹{totalPendingAmount.toLocaleString()}</p>
-              </div>
-              <ArrowDownLeft className="w-8 h-8 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-green-500">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Completed Today</p>
-                <p className="text-2xl font-bold">12</p>
-              </div>
-              <CheckCircle className="w-8 h-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-blue-500">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total Processed</p>
-                <p className="text-2xl font-bold">₹8,75,000</p>
-              </div>
-              <ArrowDownLeft className="w-8 h-8 text-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Withdrawal Management */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div>
-              <CardTitle>Withdrawal Requests</CardTitle>
-              <CardDescription>Manage user withdrawal requests and P2P assignments</CardDescription>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {/* Search and Filter */}
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Search by user ID, name, or withdrawal ID..."
-                className="pl-10"
-              />
-            </div>
-            <Button variant="outline">
-              <Filter className="w-4 h-4 mr-2" />
-              Filter
-            </Button>
-          </div>
-
-          {/* Withdrawals Table */}
-          <div className="border rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Request Details</TableHead>
-                  <TableHead>User Info</TableHead>
-                  <TableHead>Amount & Method</TableHead>
-                  <TableHead>Assignment</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {withdrawals.map((withdrawal) => (
-                  <TableRow key={withdrawal.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{withdrawal.id}</div>
-                        <div className="text-sm text-gray-600">{withdrawal.requestDate}</div>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center">
+          <AlertCircle className="w-5 h-5 mr-2 text-orange-500" />
+          Withdrawal Management
+        </CardTitle>
+        <CardDescription>Review and process user withdrawal requests</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="border rounded-lg overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>User Details</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Method</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Requested</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {withdrawals.map((withdrawal) => (
+                <TableRow key={withdrawal.id}>
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">{withdrawal.user.name}</div>
+                      <div className="text-sm text-gray-600">{withdrawal.user.email}</div>
+                      <div className="text-xs text-gray-500">ID: {withdrawal.user.id}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-semibold">₹{withdrawal.amount.toLocaleString()}</span>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <Badge variant="outline">{withdrawal.method.replace('_', ' ').toUpperCase()}</Badge>
+                      <div className="text-xs mt-1">
+                        {withdrawal.method === 'bank_transfer' && 
+                          `${withdrawal.details.bank} - ${withdrawal.details.account}`}
+                        {withdrawal.method === 'upi' && withdrawal.details.upi}
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{withdrawal.userName}</div>
-                        <div className="text-sm text-gray-600">ID: {withdrawal.userId}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">₹{withdrawal.amount.toLocaleString()}</div>
-                        <div className="text-sm text-gray-600">{withdrawal.method}</div>
-                        <div className="text-xs text-gray-500">{withdrawal.details}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        {withdrawal.assignedTo.includes("Waiting") ? (
-                          <Badge variant="outline" className="text-orange-600">
-                            Not Assigned
-                          </Badge>
-                        ) : (
-                          <div>
-                            <div className="font-medium text-xs">{withdrawal.assignedTo}</div>
-                            <Badge variant="secondary" className="text-xs">Assigned</Badge>
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        {getStatusIcon(withdrawal.status)}
-                        {getStatusBadge(withdrawal.status)}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {withdrawal.status === "pending" && (
-                        <div className="flex space-x-2">
+                    </div>
+                  </TableCell>
+                  <TableCell>{getStatusBadge(withdrawal.status)}</TableCell>
+                  <TableCell>
+                    <span className="text-sm">{withdrawal.requestedAt}</span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <Dialog>
+                        <DialogTrigger asChild>
                           <Button 
                             size="sm" 
                             variant="outline"
-                            className="text-green-600 hover:text-green-700"
+                            onClick={() => setSelectedWithdrawal(withdrawal)}
+                          >
+                            <Eye className="w-3 h-3" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-md">
+                          <DialogHeader>
+                            <DialogTitle>Withdrawal Details</DialogTitle>
+                          </DialogHeader>
+                          {selectedWithdrawal && (
+                            <div className="space-y-4">
+                              <div>
+                                <h4 className="font-semibold">User Information</h4>
+                                <p>{selectedWithdrawal.user.name}</p>
+                                <p className="text-sm text-gray-600">{selectedWithdrawal.user.email}</p>
+                              </div>
+                              <div>
+                                <h4 className="font-semibold">Amount</h4>
+                                <p className="text-lg">₹{selectedWithdrawal.amount.toLocaleString()}</p>
+                              </div>
+                              <div>
+                                <h4 className="font-semibold">Payment Method</h4>
+                                <p>{selectedWithdrawal.method.replace('_', ' ').toUpperCase()}</p>
+                              </div>
+                              {selectedWithdrawal.proofUrl && (
+                                <div>
+                                  <h4 className="font-semibold">Payment Proof</h4>
+                                  <img 
+                                    src={selectedWithdrawal.proofUrl} 
+                                    alt="Payment proof" 
+                                    className="w-full h-32 object-cover border rounded"
+                                  />
+                                </div>
+                              )}
+                              <div>
+                                <h4 className="font-semibold">Admin Notes</h4>
+                                <Textarea
+                                  placeholder="Add notes..."
+                                  value={adminNotes}
+                                  onChange={(e) => setAdminNotes(e.target.value)}
+                                />
+                              </div>
+                              <div className="flex space-x-2">
+                                <Button 
+                                  onClick={() => handleApprove(selectedWithdrawal.id)}
+                                  className="flex-1 bg-green-600 hover:bg-green-700"
+                                >
+                                  <CheckCircle className="w-4 h-4 mr-2" />
+                                  Approve
+                                </Button>
+                                <Button 
+                                  onClick={() => handleReject(selectedWithdrawal.id)}
+                                  variant="destructive"
+                                  className="flex-1"
+                                >
+                                  <XCircle className="w-4 h-4 mr-2" />
+                                  Reject
+                                </Button>
+                              </div>
+                            </div>
+                          )}
+                        </DialogContent>
+                      </Dialog>
+                      
+                      {withdrawal.status === "pending" && (
+                        <>
+                          <Button 
+                            size="sm" 
                             onClick={() => handleApprove(withdrawal.id)}
+                            className="bg-green-600 hover:bg-green-700 text-white"
                           >
                             <CheckCircle className="w-3 h-3" />
                           </Button>
                           <Button 
                             size="sm" 
-                            variant="outline"
-                            className="text-red-600 hover:text-red-700"
+                            variant="destructive"
                             onClick={() => handleReject(withdrawal.id)}
                           >
                             <XCircle className="w-3 h-3" />
                           </Button>
-                        </div>
+                        </>
                       )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          {/* Pagination */}
-          <div className="flex items-center justify-between mt-4">
-            <p className="text-sm text-gray-600">Showing 1-3 of 45 withdrawals</p>
-            <div className="flex space-x-2">
-              <Button variant="outline" size="sm">Previous</Button>
-              <Button variant="outline" size="sm">Next</Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

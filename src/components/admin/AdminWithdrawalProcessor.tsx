@@ -1,227 +1,210 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CheckCircle, XCircle, Clock } from "lucide-react";
+import { Upload, Download, CheckCircle2, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-
-interface Withdrawal {
-  id: string;
-  user_id: string;
-  amount: number;
-  payment_method: string;
-  payment_details: any;
-  status: string;
-  created_at: string;
-  profiles: {
-    full_name: string;
-    email: string;
-    referral_code: string;
-  };
-}
 
 const AdminWithdrawalProcessor = () => {
-  const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState<string | null>(null);
-  const [notes, setNotes] = useState<Record<string, string>>({});
   const { toast } = useToast();
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [processing, setProcessing] = useState(false);
 
-  const fetchWithdrawals = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('withdrawals')
-        .select(`
-          *,
-          profiles:user_id(full_name, email, referral_code)
-        `)
-        .order('created_at', { ascending: false });
+  // Mock data for batch processing
+  const [batchWithdrawals] = useState([
+    { id: "W001", user: "John Doe", amount: 5000, method: "Bank Transfer", account: "****1234" },
+    { id: "W002", user: "Jane Smith", amount: 2500, method: "UPI", account: "jane@paytm" },
+    { id: "W003", user: "Mike Johnson", amount: 7500, method: "Bank Transfer", account: "****5678" },
+  ]);
 
-      if (error) throw error;
-      setWithdrawals(data || []);
-    } catch (error) {
-      console.error('Error fetching withdrawals:', error);
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setUploadedFile(file);
       toast({
-        title: 'Error',
-        description: 'Failed to fetch withdrawals',
-        variant: 'destructive',
+        title: "File Uploaded",
+        description: `${file.name} has been uploaded successfully.`,
       });
-    } finally {
-      setLoading(false);
     }
   };
 
-  const processWithdrawal = async (withdrawalId: string, action: 'approve' | 'reject') => {
-    setProcessing(withdrawalId);
-    try {
-      const { data, error } = await supabase.rpc('admin_process_withdrawal', {
-        p_withdrawal_id: withdrawalId,
-        p_action: action,
-        p_notes: notes[withdrawalId] || null,
-      });
-
-      if (error) throw error;
-
-      const result = data as { success: boolean; error?: string };
-
-      if (result.success) {
-        toast({
-          title: 'Success',
-          description: `Withdrawal ${action}d successfully`,
-        });
-        await fetchWithdrawals();
-        setNotes(prev => ({ ...prev, [withdrawalId]: '' }));
-      } else {
-        toast({
-          title: 'Error',
-          description: result.error || `Failed to ${action} withdrawal`,
-          variant: 'destructive',
-        });
-      }
-    } catch (error) {
-      console.error(`Error ${action}ing withdrawal:`, error);
-      toast({
-        title: 'Error',
-        description: `Failed to ${action} withdrawal`,
-        variant: 'destructive',
-      });
-    } finally {
-      setProcessing(null);
-    }
+  const handleBatchProcess = async () => {
+    setProcessing(true);
+    // Simulate processing
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setProcessing(false);
+    toast({
+      title: "Batch Processing Complete",
+      description: `${batchWithdrawals.length} withdrawals have been processed.`,
+    });
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return <Clock className="w-4 h-4 text-orange-500" />;
-      case 'completed':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'rejected':
-        return <XCircle className="w-4 h-4 text-red-500" />;
-      default:
-        return <Clock className="w-4 h-4 text-gray-500" />;
-    }
+  const handleExportPending = () => {
+    toast({
+      title: "Export Started",
+      description: "Pending withdrawals are being exported to CSV.",
+    });
   };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return <Badge className="bg-orange-100 text-orange-800">Pending</Badge>;
-      case 'completed':
-        return <Badge className="bg-green-100 text-green-800">Completed</Badge>;
-      case 'rejected':
-        return <Badge className="bg-red-100 text-red-800">Rejected</Badge>;
-      default:
-        return <Badge className="bg-gray-100 text-gray-800">Unknown</Badge>;
-    }
-  };
-
-  useEffect(() => {
-    fetchWithdrawals();
-  }, []);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Withdrawal Processing</CardTitle>
-        <CardDescription>Review and process user withdrawal requests</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {loading ? (
-          <div className="text-center py-4">Loading withdrawals...</div>
-        ) : (
-          <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Batch Processing Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Upload className="w-5 h-5 mr-2 text-blue-500" />
+            Batch Withdrawal Processing
+          </CardTitle>
+          <CardDescription>
+            Upload payment confirmations and process multiple withdrawals at once
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="batch-file">Upload Payment Confirmation File</Label>
+              <Input
+                id="batch-file"
+                type="file"
+                accept=".csv,.xlsx,.txt"
+                onChange={handleFileUpload}
+              />
+              {uploadedFile && (
+                <p className="text-sm text-green-600">
+                  ✅ {uploadedFile.name} uploaded
+                </p>
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Quick Actions</Label>
+              <div className="flex space-x-2">
+                <Button 
+                  onClick={handleBatchProcess}
+                  disabled={!uploadedFile || processing}
+                  className="flex-1"
+                >
+                  {processing ? "Processing..." : "Process Batch"}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={handleExportPending}
+                  className="flex-1"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export Pending
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Current Batch Preview */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Current Batch Preview</CardTitle>
+          <CardDescription>Preview of withdrawals ready for processing</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Withdrawal ID</TableHead>
                   <TableHead>User</TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead>Method</TableHead>
+                  <TableHead>Account</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {withdrawals.map((withdrawal) => (
+                {batchWithdrawals.map((withdrawal) => (
                   <TableRow key={withdrawal.id}>
+                    <TableCell className="font-mono">{withdrawal.id}</TableCell>
+                    <TableCell>{withdrawal.user}</TableCell>
+                    <TableCell className="font-semibold">₹{withdrawal.amount.toLocaleString()}</TableCell>
                     <TableCell>
-                      <div>
-                        <div className="font-medium">{withdrawal.profiles?.full_name}</div>
-                        <div className="text-sm text-gray-600">{withdrawal.profiles?.referral_code}</div>
-                      </div>
+                      <Badge variant="outline">{withdrawal.method}</Badge>
                     </TableCell>
+                    <TableCell className="font-mono">{withdrawal.account}</TableCell>
                     <TableCell>
-                      <div className="font-semibold">₹{withdrawal.amount.toLocaleString()}</div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="capitalize">{withdrawal.payment_method.replace('_', ' ')}</div>
-                        <div className="text-xs text-gray-500">
-                          {withdrawal.payment_details?.upi_id || 
-                           withdrawal.payment_details?.account_number ||
-                           'Details available'}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-2">
-                        {getStatusIcon(withdrawal.status)}
-                        {getStatusBadge(withdrawal.status)}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="text-sm">
-                        {new Date(withdrawal.created_at).toLocaleDateString()}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {withdrawal.status === 'pending' && (
-                        <div className="space-y-2">
-                          <Textarea
-                            placeholder="Admin notes (optional)"
-                            value={notes[withdrawal.id] || ''}
-                            onChange={(e) => setNotes(prev => ({
-                              ...prev,
-                              [withdrawal.id]: e.target.value
-                            }))}
-                            className="min-h-[60px]"
-                          />
-                          <div className="flex space-x-2">
-                            <Button
-                              size="sm"
-                              onClick={() => processWithdrawal(withdrawal.id, 'approve')}
-                              disabled={processing === withdrawal.id}
-                              className="bg-green-600 hover:bg-green-700"
-                            >
-                              {processing === withdrawal.id ? 'Processing...' : 'Approve'}
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => processWithdrawal(withdrawal.id, 'reject')}
-                              disabled={processing === withdrawal.id}
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              Reject
-                            </Button>
-                          </div>
-                        </div>
-                      )}
+                      <Badge className="bg-yellow-100 text-yellow-800">
+                        <AlertTriangle className="w-3 h-3 mr-1" />
+                        Ready
+                      </Badge>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-        )}
-      </CardContent>
-    </Card>
+          
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-semibold text-blue-900">Batch Summary</h4>
+                <p className="text-sm text-blue-700">
+                  {batchWithdrawals.length} withdrawals • Total: ₹{batchWithdrawals.reduce((sum, w) => sum + w.amount, 0).toLocaleString()}
+                </p>
+              </div>
+              <Button 
+                onClick={handleBatchProcess}
+                disabled={processing}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                {processing ? "Processing..." : "Process All"}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Processing Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border-l-4 border-l-green-500">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Processed Today</p>
+                <p className="text-2xl font-bold">47</p>
+              </div>
+              <CheckCircle2 className="w-8 h-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-l-4 border-l-yellow-500">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Pending Queue</p>
+                <p className="text-2xl font-bold">12</p>
+              </div>
+              <AlertTriangle className="w-8 h-8 text-yellow-500" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-l-4 border-l-blue-500">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Amount</p>
+                <p className="text-2xl font-bold">₹1.2L</p>
+              </div>
+              <Download className="w-8 h-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
 

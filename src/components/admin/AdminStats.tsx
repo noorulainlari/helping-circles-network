@@ -1,100 +1,141 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Package, Wallet, TrendingUp, AlertCircle, CheckCircle } from "lucide-react";
+import { Users, Package, DollarSign, TrendingUp, Wallet, UserCheck } from "lucide-react";
 
 const AdminStats = () => {
-  const stats = [
-    {
-      title: "Total Users",
-      value: "1,234",
-      description: "Active: 987 | Inactive: 247",
-      icon: Users,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
-      borderColor: "border-l-blue-500",
-    },
-    {
-      title: "Active Packages",
-      value: "₹12,45,000",
-      description: "From 987 activations",
-      icon: Package,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
-      borderColor: "border-l-green-500",
-    },
-    {
-      title: "Total Withdrawals",
-      value: "₹8,75,000",
-      description: "456 completed withdrawals",
-      icon: Wallet,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
-      borderColor: "border-l-purple-500",
-    },
-    {
-      title: "Platform Revenue",
-      value: "₹1,23,000",
-      description: "This month earnings",
-      icon: TrendingUp,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50",
-      borderColor: "border-l-orange-500",
-    },
-  ];
-
-  const pendingItems = [
-    { title: "Pending Activations", count: 12, color: "text-orange-600" },
-    { title: "Pending Withdrawals", count: 8, color: "text-red-600" },
-    { title: "Support Tickets", count: 5, color: "text-blue-600" },
-  ];
+  // Mock data - in real app, fetch from API
+  const stats = {
+    totalUsers: 1247,
+    activeUsers: 892,
+    totalPackages: 3,
+    totalRevenue: 125000,
+    pendingWithdrawals: 15,
+    todaySignups: 23
+  };
 
   return (
     <div className="space-y-6">
-      {/* Main Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat) => {
-          const IconComponent = stat.icon;
-          return (
-            <Card key={stat.title} className={`border-l-4 ${stat.borderColor}`}>
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium text-gray-700">{stat.title}</CardTitle>
-                  <div className={`w-8 h-8 ${stat.bgColor} rounded-full flex items-center justify-center`}>
-                    <IconComponent className={`w-4 h-4 ${stat.color}`} />
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-                <p className="text-xs text-gray-600 mt-1">{stat.description}</p>
-              </CardContent>
-            </Card>
-          );
-        })}
+      {/* Overview Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Card className="border-l-4 border-l-blue-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Total Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">{stats.totalUsers.toLocaleString()}</div>
+                <p className="text-xs text-green-600">+12% from last month</p>
+              </div>
+              <Users className="w-8 h-8 text-blue-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-green-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Active Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">{stats.activeUsers.toLocaleString()}</div>
+                <p className="text-xs text-green-600">+8% from last month</p>
+              </div>
+              <UserCheck className="w-8 h-8 text-green-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-purple-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Total Revenue</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">₹{stats.totalRevenue.toLocaleString()}</div>
+                <p className="text-xs text-green-600">+15% from last month</p>
+              </div>
+              <DollarSign className="w-8 h-8 text-purple-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-orange-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Available Packages</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">{stats.totalPackages}</div>
+                <p className="text-xs text-gray-600">Active packages</p>
+              </div>
+              <Package className="w-8 h-8 text-orange-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-red-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Pending Withdrawals</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">{stats.pendingWithdrawals}</div>
+                <p className="text-xs text-red-600">Requires attention</p>
+              </div>
+              <Wallet className="w-8 h-8 text-red-500" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-teal-500">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600">Today's Signups</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-2xl font-bold">{stats.todaySignups}</div>
+                <p className="text-xs text-green-600">New registrations</p>
+              </div>
+              <TrendingUp className="w-8 h-8 text-teal-500" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Pending Actions */}
+      {/* Quick Actions */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center">
-            <AlertCircle className="w-5 h-5 mr-2 text-orange-500" />
-            Pending Actions
-          </CardTitle>
-          <CardDescription>Items requiring your attention</CardDescription>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>Common administrative tasks</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {pendingItems.map((item) => (
-              <div key={item.title} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div>
-                  <h4 className="font-medium text-sm">{item.title}</h4>
-                  <p className="text-xs text-gray-600">Needs review</p>
-                </div>
-                <div className={`text-2xl font-bold ${item.color}`}>
-                  {item.count}
-                </div>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 bg-blue-50 rounded-lg text-center">
+              <Users className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+              <h3 className="font-semibold">User Management</h3>
+              <p className="text-sm text-gray-600">Manage user accounts</p>
+            </div>
+            <div className="p-4 bg-green-50 rounded-lg text-center">
+              <Package className="w-8 h-8 mx-auto mb-2 text-green-600" />
+              <h3 className="font-semibold">Package Control</h3>
+              <p className="text-sm text-gray-600">Manage packages</p>
+            </div>
+            <div className="p-4 bg-purple-50 rounded-lg text-center">
+              <Wallet className="w-8 h-8 mx-auto mb-2 text-purple-600" />
+              <h3 className="font-semibold">Withdrawals</h3>
+              <p className="text-sm text-gray-600">Process withdrawals</p>
+            </div>
+            <div className="p-4 bg-orange-50 rounded-lg text-center">
+              <TrendingUp className="w-8 h-8 mx-auto mb-2 text-orange-600" />
+              <h3 className="font-semibold">Analytics</h3>
+              <p className="text-sm text-gray-600">View reports</p>
+            </div>
           </div>
         </CardContent>
       </Card>
