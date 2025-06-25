@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Package } from "lucide-react";
+import { Crown, Package, Upload, Clock } from "lucide-react";
 import { usePackages } from "@/hooks/usePackages";
 import { useProfile } from "@/hooks/useProfile";
 
@@ -14,6 +14,7 @@ const PackageActivation = () => {
   const { profile, refetch } = useProfile();
   const [referralCode, setReferralCode] = useState("");
   const [activating, setActivating] = useState<string | null>(null);
+  const [paymentSlip, setPaymentSlip] = useState<File | null>(null);
 
   const handleActivatePackage = async (packageId: string) => {
     setActivating(packageId);
@@ -25,6 +26,13 @@ const PackageActivation = () => {
       }
     } finally {
       setActivating(null);
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setPaymentSlip(file);
     }
   };
 
@@ -43,6 +51,29 @@ const PackageActivation = () => {
             <Badge className="bg-green-100 text-green-800 mb-2">Active</Badge>
             <p className="text-gray-600">
               Package activated on: {new Date(profile.package_activated_at || '').toLocaleDateString()}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Show pending payment status if user has selected a package but payment is pending
+  if (profile?.status === 'suspended') {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Clock className="w-5 h-5 mr-2 text-orange-500" />
+            Payment Pending
+          </CardTitle>
+          <CardDescription>Your payment is being verified</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-4">
+            <Badge className="bg-orange-100 text-orange-800 mb-2">Pending Verification</Badge>
+            <p className="text-gray-600">
+              Please wait while we verify your payment. This usually takes 24-48 hours.
             </p>
           </div>
         </CardContent>
@@ -71,6 +102,26 @@ const PackageActivation = () => {
           />
         </div>
 
+        {/* Payment Slip Upload */}
+        <div className="space-y-2">
+          <Label htmlFor="paymentSlip">Payment Slip Upload</Label>
+          <div className="flex items-center space-x-2">
+            <Input
+              id="paymentSlip"
+              type="file"
+              accept="image/*,.pdf"
+              onChange={handleFileUpload}
+              className="flex-1"
+            />
+            <Upload className="w-4 h-4 text-gray-400" />
+          </div>
+          {paymentSlip && (
+            <p className="text-sm text-green-600">
+              File selected: {paymentSlip.name}
+            </p>
+          )}
+        </div>
+
         {/* Packages */}
         <div className="space-y-3">
           {loading ? (
@@ -96,16 +147,27 @@ const PackageActivation = () => {
                     </div>
                     <Button
                       onClick={() => handleActivatePackage(pkg.id)}
-                      disabled={activating === pkg.id}
+                      disabled={activating === pkg.id || !paymentSlip}
                       className="bg-blue-600 hover:bg-blue-700"
                     >
-                      {activating === pkg.id ? 'Activating...' : 'Activate'}
+                      {activating === pkg.id ? 'Submitting...' : 'Submit for Verification'}
                     </Button>
                   </div>
                 </CardContent>
               </Card>
             ))
           )}
+        </div>
+
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <h4 className="font-medium text-yellow-800 mb-2">Payment Instructions:</h4>
+          <ol className="text-sm text-yellow-700 space-y-1">
+            <li>1. Select your desired package</li>
+            <li>2. Upload your payment slip/receipt</li>
+            <li>3. Click "Submit for Verification"</li>
+            <li>4. Wait for admin approval (24-48 hours)</li>
+            <li>5. Your account will be activated upon verification</li>
+          </ol>
         </div>
       </CardContent>
     </Card>
