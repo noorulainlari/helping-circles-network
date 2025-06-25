@@ -8,9 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Crown, Package, Upload, Clock } from "lucide-react";
 import { usePackages } from "@/hooks/usePackages";
 import { useProfile } from "@/hooks/useProfile";
+import { useToast } from "@/hooks/use-toast";
 
 const PackageActivation = () => {
-  const { packages, loading, activatePackage } = usePackages();
+  const { packages, loading } = usePackages();
   const { profile, refetch } = useProfile();
   const [referralCode, setReferralCode] = useState("");
   const [activating, setActivating] = useState<string | null>(null);
