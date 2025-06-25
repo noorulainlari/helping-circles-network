@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import AuthGuard from "@/components/auth/AuthGuard";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
+import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -38,6 +40,14 @@ const App = () => (
             />
             <Route
               path="/admin"
+              element={
+                <AuthGuard requireAuth={false}>
+                  <AdminLogin />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/admin-dashboard"
               element={
                 <AuthGuard requireAuth={true} requireAdmin={true}>
                   <AdminDashboard />

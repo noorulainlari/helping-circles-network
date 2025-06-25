@@ -2,13 +2,13 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Shield, LogOut, Bell, Settings } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const AdminHeader = () => {
-  const navigate = useNavigate();
+  const { signOut } = useAuth();
 
-  const handleLogout = () => {
-    navigate("/");
+  const handleLogout = async () => {
+    await signOut();
   };
 
   return (

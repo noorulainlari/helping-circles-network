@@ -20,12 +20,17 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }: AuthG
       } else if (!requireAuth && user) {
         // Redirect authenticated users to appropriate dashboard
         if (role === 'admin') {
-          navigate('/admin');
+          navigate('/admin-dashboard');
         } else {
           navigate('/dashboard');
         }
       } else if (requireAdmin && role !== 'admin') {
-        navigate('/dashboard');
+        // If user is not admin but trying to access admin area, redirect to regular dashboard
+        if (user) {
+          navigate('/dashboard');
+        } else {
+          navigate('/admin'); // Redirect to admin login if not logged in
+        }
       }
     }
   }, [user, role, loading, requireAuth, requireAdmin, navigate]);

@@ -19,8 +19,12 @@ const AdminDashboard = () => {
 
   // Redirect if not admin
   useEffect(() => {
-    if (!loading && (role !== "admin" || !user)) {
-      navigate("/dashboard");
+    if (!loading) {
+      if (!user) {
+        navigate("/admin");
+      } else if (role !== "admin") {
+        navigate("/dashboard");
+      }
     }
   }, [role, user, loading, navigate]);
 
