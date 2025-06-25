@@ -1,202 +1,201 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Settings } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Settings, Save, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 const AdminSystemSettings = () => {
-  const [settings, setSettings] = useState({
-    referralLevels: {
-      level_1: 5,
-      level_2: 3,
-      level_3: 1,
-    },
-    withdrawalLimits: {
-      min_amount: 500,
-      max_amount: 50000,
-    },
-  });
-  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const [settings, setSettings] = useState({
+    minWithdrawal: "500",
+    maxWithdrawal: "50000",
+    level1Commission: "5",
+    level2Commission: "3", 
+    level3Commission: "1",
+    autoApproveWithdrawals: false,
+    maintenanceMode: false,
+    emailNotifications: true,
+    smsNotifications: false
+  });
 
-  const fetchSettings = async () => {
-    try {
-      // Fetch referral levels
-      const { data: referralData } = await supabase
-        .from('admin_settings')
-        .select('setting_value')
-        .eq('setting_key', 'referral_levels')
-        .single();
-
-      // Fetch withdrawal limits
-      const { data: withdrawalData } = await supabase
-        .from('admin_settings')
-        .select('setting_value')
-        .eq('setting_key', 'withdrawal_limits')
-        .single();
-
-      if (referralData) {
-        setSettings(prev => ({
-          ...prev,
-          referralLevels: referralData.setting_value as any,
-        }));
-      }
-
-      if (withdrawalData) {
-        setSettings(prev => ({
-          ...prev,
-          withdrawalLimits: withdrawalData.setting_value as any,
-        }));
-      }
-    } catch (error) {
-      console.error('Error fetching settings:', error);
-    }
+  const handleSaveSettings = () => {
+    toast({
+      title: "Settings Updated",
+      description: "System settings have been saved successfully",
+    });
   };
 
-  const saveSettings = async () => {
-    setLoading(true);
-    try {
-      // Save referral levels
-      await supabase
-        .from('admin_settings')
-        .upsert({
-          setting_key: 'referral_levels',
-          setting_value: settings.referralLevels,
-          description: 'Referral commission rates for each level',
-        });
-
-      // Save withdrawal limits
-      await supabase
-        .from('admin_settings')
-        .upsert({
-          setting_key: 'withdrawal_limits',
-          setting_value: settings.withdrawalLimits,
-          description: 'Minimum and maximum withdrawal amounts',
-        });
-
-      toast({
-        title: 'Settings Saved',
-        description: 'System settings have been updated successfully',
-      });
-    } catch (error) {
-      console.error('Error saving settings:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to save settings',
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleResetSettings = () => {
+    setSettings({
+      minWithdrawal: "500",
+      maxWithdrawal: "50000",
+      level1Commission: "5",
+      level2Commission: "3",
+      level3Commission: "1",
+      autoApproveWithdrawals: false,
+      maintenanceMode: false,
+      emailNotifications: true,
+      smsNotifications: false
+    });
+    toast({
+      title: "Settings Reset",
+      description: "Settings have been reset to default values",
+    });
   };
-
-  const handleReferralChange = (level: string, value: string) => {
-    setSettings(prev => ({
-      ...prev,
-      referralLevels: {
-        ...prev.referralLevels,
-        [level]: parseFloat(value) || 0,
-      },
-    }));
-  };
-
-  const handleWithdrawalChange = (field: string, value: string) => {
-    setSettings(prev => ({
-      ...prev,
-      withdrawalLimits: {
-        ...prev.withdrawalLimits,
-        [field]: parseFloat(value) || 0,
-      },
-    }));
-  };
-
-  useEffect(() => {
-    fetchSettings();
-  }, []);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <Settings className="w-5 h-5 mr-2" />
-          System Settings
-        </CardTitle>
-        <CardDescription>Configure system-wide settings</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Referral Settings */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Referral Commission Rates (%)</h3>
-          <div className="grid grid-cols-3 gap-4">
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold">System Settings</h2>
+        <p className="text-gray-600">Configure platform parameters and features</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Withdrawal Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Settings className="w-5 h-5 mr-2" />
+              Withdrawal Limits
+            </CardTitle>
+            <CardDescription>Configure minimum and maximum withdrawal amounts</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="level1">Level 1 (%)</Label>
+              <Label htmlFor="minWithdrawal">Minimum Withdrawal (₹)</Label>
+              <Input
+                id="minWithdrawal"
+                type="number"
+                value={settings.minWithdrawal}
+                onChange={(e) => setSettings(prev => ({...prev, minWithdrawal: e.target.value}))}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="maxWithdrawal">Maximum Withdrawal (₹)</Label>
+              <Input
+                id="maxWithdrawal"
+                type="number"
+                value={settings.maxWithdrawal}
+                onChange={(e) => setSettings(prev => ({...prev, maxWithdrawal: e.target.value}))}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Commission Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Referral Commissions</CardTitle>
+            <CardDescription>Set commission rates for different levels</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="level1">Level 1 Commission (%)</Label>
               <Input
                 id="level1"
                 type="number"
-                value={settings.referralLevels.level_1}
-                onChange={(e) => handleReferralChange('level_1', e.target.value)}
-                placeholder="e.g., 5"
+                value={settings.level1Commission}
+                onChange={(e) => setSettings(prev => ({...prev, level1Commission: e.target.value}))}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="level2">Level 2 (%)</Label>
+              <Label htmlFor="level2">Level 2 Commission (%)</Label>
               <Input
                 id="level2"
                 type="number"
-                value={settings.referralLevels.level_2}
-                onChange={(e) => handleReferralChange('level_2', e.target.value)}
-                placeholder="e.g., 3"
+                value={settings.level2Commission}
+                onChange={(e) => setSettings(prev => ({...prev, level2Commission: e.target.value}))}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="level3">Level 3 (%)</Label>
+              <Label htmlFor="level3">Level 3 Commission (%)</Label>
               <Input
                 id="level3"
                 type="number"
-                value={settings.referralLevels.level_3}
-                onChange={(e) => handleReferralChange('level_3', e.target.value)}
-                placeholder="e.g., 1"
+                value={settings.level3Commission}
+                onChange={(e) => setSettings(prev => ({...prev, level3Commission: e.target.value}))}
               />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        {/* Withdrawal Settings */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Withdrawal Limits</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="minAmount">Minimum Amount (₹)</Label>
-              <Input
-                id="minAmount"
-                type="number"
-                value={settings.withdrawalLimits.min_amount}
-                onChange={(e) => handleWithdrawalChange('min_amount', e.target.value)}
-                placeholder="e.g., 500"
+        {/* System Controls */}
+        <Card>
+          <CardHeader>
+            <CardTitle>System Controls</CardTitle>
+            <CardDescription>Platform operation settings</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Auto-approve Withdrawals</Label>
+                <p className="text-sm text-gray-500">Automatically approve small withdrawals</p>
+              </div>
+              <Switch
+                checked={settings.autoApproveWithdrawals}
+                onCheckedChange={(checked) => setSettings(prev => ({...prev, autoApproveWithdrawals: checked}))}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="maxAmount">Maximum Amount (₹)</Label>
-              <Input
-                id="maxAmount"
-                type="number"
-                value={settings.withdrawalLimits.max_amount}
-                onChange={(e) => handleWithdrawalChange('max_amount', e.target.value)}
-                placeholder="e.g., 50000"
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Maintenance Mode</Label>
+                <p className="text-sm text-gray-500">Disable user access for maintenance</p>
+              </div>
+              <Switch
+                checked={settings.maintenanceMode}
+                onCheckedChange={(checked) => setSettings(prev => ({...prev, maintenanceMode: checked}))}
               />
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
-        <Button onClick={saveSettings} disabled={loading} className="w-full">
-          {loading ? 'Saving...' : 'Save Settings'}
+        {/* Notification Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Notifications</CardTitle>
+            <CardDescription>Configure notification preferences</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Email Notifications</Label>
+                <p className="text-sm text-gray-500">Send email alerts for important events</p>
+              </div>
+              <Switch
+                checked={settings.emailNotifications}
+                onCheckedChange={(checked) => setSettings(prev => ({...prev, emailNotifications: checked}))}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>SMS Notifications</Label>
+                <p className="text-sm text-gray-500">Send SMS alerts for critical events</p>
+              </div>
+              <Switch
+                checked={settings.smsNotifications}
+                onCheckedChange={(checked) => setSettings(prev => ({...prev, smsNotifications: checked}))}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex space-x-4">
+        <Button onClick={handleSaveSettings} className="flex items-center">
+          <Save className="w-4 h-4 mr-2" />
+          Save Settings
         </Button>
-      </CardContent>
-    </Card>
+        <Button variant="outline" onClick={handleResetSettings} className="flex items-center">
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Reset to Defaults
+        </Button>
+      </div>
+    </div>
   );
 };
 

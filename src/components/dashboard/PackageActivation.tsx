@@ -15,15 +15,40 @@ const PackageActivation = () => {
   const [referralCode, setReferralCode] = useState("");
   const [activating, setActivating] = useState<string | null>(null);
   const [paymentSlip, setPaymentSlip] = useState<File | null>(null);
+  const { toast } = useToast();
 
   const handleActivatePackage = async (packageId: string) => {
+    if (!paymentSlip) {
+      toast({
+        title: "Payment Slip Required",
+        description: "Please upload your payment slip before activating the package",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setActivating(packageId);
     try {
-      const result = await activatePackage(packageId, referralCode);
-      if (result.success) {
-        await refetch(); // Refresh profile data
-        setReferralCode("");
-      }
+      // Simulate package activation - in real app this would upload the payment slip
+      // and create a pending activation request
+      toast({
+        title: "Package Activation Submitted",
+        description: "Your package activation request has been submitted for verification. You will receive confirmation within 24-48 hours.",
+      });
+      
+      // For demo purposes, we'll show the pending state
+      setTimeout(() => {
+        refetch();
+      }, 1000);
+      
+      setReferralCode("");
+      setPaymentSlip(null);
+    } catch (error) {
+      toast({
+        title: "Activation Failed",
+        description: "Failed to submit package activation request. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setActivating(null);
     }
@@ -32,7 +57,32 @@ const PackageActivation = () => {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+      if (!allowedTypes.includes(file.type)) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please upload only JPEG, PNG, or PDF files",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please upload a file smaller than 5MB",
+          variant: "destructive"
+        });
+        return;
+      }
+      
       setPaymentSlip(file);
+      toast({
+        title: "File Uploaded",
+        description: `${file.name} has been selected`,
+      });
     }
   };
 
@@ -104,7 +154,7 @@ const PackageActivation = () => {
 
         {/* Payment Slip Upload */}
         <div className="space-y-2">
-          <Label htmlFor="paymentSlip">Payment Slip Upload</Label>
+          <Label htmlFor="paymentSlip">Payment Slip Upload *</Label>
           <div className="flex items-center space-x-2">
             <Input
               id="paymentSlip"
@@ -163,7 +213,7 @@ const PackageActivation = () => {
           <h4 className="font-medium text-yellow-800 mb-2">Payment Instructions:</h4>
           <ol className="text-sm text-yellow-700 space-y-1">
             <li>1. Select your desired package</li>
-            <li>2. Upload your payment slip/receipt</li>
+            <li>2. Upload your payment slip/receipt (Required)</li>
             <li>3. Click "Submit for Verification"</li>
             <li>4. Wait for admin approval (24-48 hours)</li>
             <li>5. Your account will be activated upon verification</li>

@@ -3,6 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Wallet, Eye, EyeOff, ArrowUpRight, ArrowDownLeft, Plus } from "lucide-react";
 import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 interface User {
   walletBalance: number;
@@ -16,6 +20,55 @@ interface WalletSectionProps {
 
 const WalletSection = ({ user }: WalletSectionProps) => {
   const [showBalance, setShowBalance] = useState(true);
+  const [addMoneyOpen, setAddMoneyOpen] = useState(false);
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [amount, setAmount] = useState("");
+  const { toast } = useToast();
+
+  const handleAddMoney = () => {
+    if (!amount || parseFloat(amount) <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid amount",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "Add Money Request",
+      description: `Request to add ₹${amount} has been submitted`,
+    });
+    setAmount("");
+    setAddMoneyOpen(false);
+  };
+
+  const handleWithdraw = () => {
+    if (!amount || parseFloat(amount) <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid amount",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (parseFloat(amount) > user.walletBalance) {
+      toast({
+        title: "Insufficient Balance",
+        description: "You don't have enough balance for this withdrawal",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    toast({
+      title: "Withdrawal Request",
+      description: `Withdrawal request for ₹${amount} has been submitted`,
+    });
+    setAmount("");
+    setWithdrawOpen(false);
+  };
 
   return (
     <Card className="bg-gradient-to-r from-blue-600 to-green-600 text-white border-0">
@@ -60,14 +113,69 @@ const WalletSection = ({ user }: WalletSectionProps) => {
           </div>
 
           <div className="flex space-x-2 pt-2">
-            <Button variant="secondary" size="sm" className="flex-1">
-              <ArrowUpRight className="w-4 h-4 mr-1" />
-              Withdraw
-            </Button>
-            <Button variant="secondary" size="sm" className="flex-1">
-              <Plus className="w-4 h-4 mr-1" />
-              Add Money
-            </Button>
+            <Dialog open={withdrawOpen} onOpenChange={setWithdrawOpen}>
+              <DialogTrigger asChild>
+                <Button variant="secondary" size="sm" className="flex-1">
+                  <ArrowUpRight className="w-4 h-4 mr-1" />
+                  Withdraw
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Withdraw Money</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="withdrawAmount">Amount (₹)</Label>
+                    <Input
+                      id="withdrawAmount"
+                      type="number"
+                      placeholder="Enter amount to withdraw"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                    />
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Available Balance: ₹{user.walletBalance.toLocaleString()}
+                  </p>
+                  <Button onClick={handleWithdraw} className="w-full">
+                    Submit Withdrawal Request
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={addMoneyOpen} onOpenChange={setAddMoneyOpen}>
+              <DialogTrigger asChild>
+                <Button variant="secondary" size="sm" className="flex-1">
+                  <Plus className="w-4 h-4 mr-1" />
+                  Add Money
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add Money</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="addAmount">Amount (₹)</Label>
+                    <Input
+                      id="addAmount"
+                      type="number"
+                      placeholder="Enter amount to add"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                    />
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Minimum amount: ₹100
+                  </p>
+                  <Button onClick={handleAddMoney} className="w-full">
+                    Submit Add Money Request
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </CardContent>
