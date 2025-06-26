@@ -14,7 +14,6 @@ export const useProfile = () => {
   const fetchProfile = useCallback(async () => {
     console.log('Fetching profile for user:', user?.id);
     
-    // Always set loading to false at the end, regardless of outcome
     try {
       if (!user) {
         console.log('No user found, setting profile to null');
