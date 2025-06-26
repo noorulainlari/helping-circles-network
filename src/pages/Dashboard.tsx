@@ -1,3 +1,4 @@
+
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import WalletSection from "@/components/dashboard/WalletSection";
 import ReferralSection from "@/components/dashboard/ReferralSection";
@@ -8,10 +9,15 @@ import WalletHistory from "@/components/dashboard/WalletHistory";
 import ROITracker from "@/components/dashboard/ROITracker";
 import { useProfile } from "@/hooks/useProfile";
 import { useWallet } from "@/hooks/useWallet";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
 
 const Dashboard = () => {
   const { profile, loading: profileLoading } = useProfile();
   const { balance } = useWallet();
+  const { user, signOut } = useAuth();
+
+  console.log('Dashboard render - User:', user?.id, 'Profile loading:', profileLoading, 'Profile:', profile);
 
   if (profileLoading) {
     return (
@@ -24,11 +30,45 @@ const Dashboard = () => {
     );
   }
 
-  if (!profile) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-gray-600">Profile not found</p>
+          <p className="text-gray-600 mb-4">Please log in to access the dashboard</p>
+          <Button onClick={() => window.location.href = '/'}>Go to Login</Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <div className="mb-4">
+            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-gray-500 text-2xl">!</span>
+            </div>
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">Profile Not Found</h2>
+            <p className="text-gray-600 mb-4">
+              Your profile could not be loaded. This might be a temporary issue or your account may need to be set up.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="w-full"
+            >
+              Refresh Page
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={signOut}
+              className="w-full"
+            >
+              Sign Out
+            </Button>
+          </div>
         </div>
       </div>
     );

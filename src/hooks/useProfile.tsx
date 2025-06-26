@@ -12,13 +12,16 @@ export const useProfile = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = useCallback(async () => {
-    if (!user) {
-      setProfile(null);
-      setLoading(false);
-      return;
-    }
-
+    console.log('Fetching profile for user:', user?.id);
+    
+    // Always set loading to false at the end, regardless of outcome
     try {
+      if (!user) {
+        console.log('No user found, setting profile to null');
+        setProfile(null);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -27,12 +30,24 @@ export const useProfile = () => {
 
       if (error) {
         console.error('Error fetching profile:', error);
+        // If profile not found, set to null but don't treat as error
+        if (error.code === 'PGRST116') {
+          console.log('Profile not found for user, setting to null');
+          setProfile(null);
+        } else {
+          console.error('Database error:', error);
+          setProfile(null);
+        }
       } else {
+        console.log('Profile fetched successfully:', data);
         setProfile(data);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Unexpected error fetching profile:', error);
+      setProfile(null);
     } finally {
+      // Always set loading to false
+      console.log('Setting loading to false');
       setLoading(false);
     }
   }, [user]);
