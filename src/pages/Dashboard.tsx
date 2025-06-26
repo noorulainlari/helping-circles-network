@@ -11,15 +11,23 @@ import { useProfile } from "@/hooks/useProfile";
 import { useWallet } from "@/hooks/useWallet";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { RefreshCw, LogOut, AlertCircle } from "lucide-react";
 
 const Dashboard = () => {
-  const { profile, loading: profileLoading } = useProfile();
+  const { user, loading: authLoading, signOut } = useAuth();
+  const { profile, loading: profileLoading, refetch } = useProfile();
   const { balance } = useWallet();
-  const { user, signOut } = useAuth();
 
-  console.log('Dashboard render - User:', user?.id, 'Profile loading:', profileLoading, 'Profile:', profile);
+  console.log('Dashboard render state:', {
+    authLoading,
+    profileLoading,
+    userId: user?.id,
+    profile: profile?.id,
+    hasProfile: !!profile
+  });
 
-  if (profileLoading) {
+  // Show loading while auth or profile is loading
+  if (authLoading || profileLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
         <div className="text-center">
@@ -30,42 +38,63 @@ const Dashboard = () => {
     );
   }
 
+  // Show login prompt if no user
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600 mb-4">Please log in to access the dashboard</p>
-          <Button onClick={() => window.location.href = '/'}>Go to Login</Button>
+        <div className="text-center max-w-md mx-auto p-6">
+          <div className="mb-4">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="text-blue-600 text-2xl w-8 h-8" />
+            </div>
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">Access Required</h2>
+            <p className="text-gray-600 mb-4">
+              Please log in to access your dashboard.
+            </p>
+          </div>
+          <Button 
+            onClick={() => window.location.href = '/'} 
+            className="w-full"
+          >
+            Go to Login
+          </Button>
         </div>
       </div>
     );
   }
 
+  // Show profile not found message if no profile
   if (!profile) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
           <div className="mb-4">
-            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-gray-500 text-2xl">!</span>
+            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="text-orange-600 text-2xl w-8 h-8" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">Profile Not Found</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">Profile Setup Required</h2>
             <p className="text-gray-600 mb-4">
-              Your profile could not be loaded. This might be a temporary issue or your account may need to be set up.
+              Your profile could not be loaded. This might be because your account is still being set up or there was an error.
+            </p>
+            <p className="text-sm text-gray-500 mb-4">
+              User ID: {user.id}
             </p>
           </div>
           <div className="space-y-2">
             <Button 
-              onClick={() => window.location.reload()} 
-              className="w-full"
+              onClick={refetch}
+              className="w-full flex items-center justify-center gap-2"
+              disabled={profileLoading}
             >
-              Refresh Page
+              <RefreshCw className={`w-4 h-4 ${profileLoading ? 'animate-spin' : ''}`} />
+              Refresh Profile
             </Button>
             <Button 
               variant="outline" 
               onClick={signOut}
-              className="w-full"
+              className="w-full flex items-center justify-center gap-2"
             >
+              <LogOut className="w-4 h-4" />
               Sign Out
             </Button>
           </div>
@@ -74,18 +103,21 @@ const Dashboard = () => {
     );
   }
 
+  // Main dashboard with profile data
   const userData = {
-    name: profile.full_name,
-    userId: profile.referral_code,
-    email: profile.email,
+    name: profile.full_name || 'User',
+    userId: profile.referral_code || 'N/A',
+    email: profile.email || 'No email',
     status: profile.status || 'inactive',
     walletBalance: profile.wallet_balance || 0,
     totalROI: profile.total_roi_earned || 0,
     totalReferralIncome: profile.total_referral_earned || 0,
     totalWithdrawn: profile.total_withdrawn || 0,
     currentPackage: profile.package_id ? 'Active Package' : null,
-    joinDate: new Date(profile.created_at || '').toLocaleDateString(),
+    joinDate: profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A',
   };
+
+  console.log('Rendering dashboard with userData:', userData);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">

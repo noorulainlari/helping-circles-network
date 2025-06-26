@@ -45,10 +45,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let mounted = true;
 
-    // Initialize auth state
     const initializeAuth = async () => {
       try {
-        // Clear any stale state first
+        console.log('Initializing auth...');
         const { data: { session: initialSession }, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -58,6 +57,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
           return;
         }
+
+        console.log('Initial session:', initialSession?.user?.id || 'No session');
 
         if (mounted) {
           setSession(initialSession);
@@ -83,10 +84,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id);
+        console.log('Auth state changed:', event, session?.user?.id || 'No user');
         
         if (!mounted) return;
         
@@ -109,6 +109,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (mounted) {
             setRole(null);
           }
+        }
+        
+        if (mounted) {
+          setLoading(false);
         }
       }
     );
@@ -134,6 +138,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     if (error) {
+      console.error('Sign up error:', error);
       toast({
         title: "Sign Up Error",
         description: error.message,
@@ -151,12 +156,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
+      setLoading(true);
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
 
       if (error) {
+        console.error('Sign in error:', error);
         toast({
           title: "Login Error",
           description: error.message,
@@ -178,20 +185,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         variant: "destructive"
       });
       return { error };
+    } finally {
+      setLoading(false);
     }
   };
 
   const signOut = async () => {
     try {
+      setLoading(true);
       const { error } = await supabase.auth.signOut();
       if (error) {
+        console.error('Sign out error:', error);
         toast({
           title: "Error",
           description: error.message,
           variant: "destructive"
         });
       } else {
-        // Clear local state immediately
         setUser(null);
         setSession(null);
         setRole(null);
@@ -199,6 +209,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           title: "Logged out",
           description: "You have been logged out successfully.",
         });
+        // Redirect to home page after logout
+        window.location.href = '/';
       }
     } catch (error) {
       console.error('Sign out error:', error);
@@ -207,6 +219,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         description: "An error occurred during logout",
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
     }
   };
 
