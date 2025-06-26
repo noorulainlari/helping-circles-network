@@ -26,13 +26,24 @@ export const useSecureAuth = () => {
 
   const logSecurityEvent = async (action: string, details: any = {}) => {
     try {
-      await supabase.from('security_audit_log').insert({
+      // Use console logging for now until types are updated
+      console.log('Security Event:', {
         user_id: user?.id,
         action,
         details,
-        ip_address: await getClientIP(),
+        timestamp: new Date().toISOString(),
         user_agent: navigator.userAgent,
       });
+      
+      // Store in localStorage as backup
+      const events = JSON.parse(localStorage.getItem('security_events') || '[]');
+      events.push({
+        user_id: user?.id,
+        action,
+        details,
+        timestamp: new Date().toISOString(),
+      });
+      localStorage.setItem('security_events', JSON.stringify(events.slice(-100))); // Keep last 100 events
     } catch (error) {
       console.error('Failed to log security event:', error);
     }

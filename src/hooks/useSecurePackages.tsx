@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from './useAuth';
 import { Tables } from '@/integrations/supabase/types';
+import { sanitizeInput, amountSchema, referralCodeSchema } from '@/components/security/InputValidator';
 
 type Package = Tables<'packages'>;
 
@@ -46,10 +47,43 @@ export const useSecurePackages = () => {
     }
 
     try {
-      // Use the new secure function
-      const { data, error } = await supabase.rpc('secure_activate_package', {
-        p_package_id: packageId,
-        p_referral_code: referralCode || null,
+      // Validate inputs
+      if (!packageId || typeof packageId !== 'string') {
+        throw new Error('Invalid package ID');
+      }
+
+      // Validate referral code if provided
+      if (referralCode) {
+        const sanitizedCode = sanitizeInput(referralCode);
+        try {
+          referralCodeSchema.parse(sanitizedCode);
+        } catch (validationError) {
+          toast({
+            title: 'Invalid Referral Code',
+            description: 'Please enter a valid referral code format',
+            variant: 'destructive',
+          });
+          return { success: false, error: 'Invalid referral code format' };
+        }
+      }
+
+      // Validate package exists and is active
+      const selectedPackage = packages.find(pkg => pkg.id === packageId);
+      if (!selectedPackage) {
+        throw new Error('Package not found or inactive');
+      }
+
+      // Validate package amount
+      try {
+        amountSchema.parse(selectedPackage.amount);
+      } catch (validationError) {
+        throw new Error('Invalid package amount');
+      }
+
+      // Use the existing RPC function for now
+      const { data, error } = await supabase.rpc('rpc_activate_package', {
+        package_id: packageId,
+        referral_code: referralCode ? sanitizeInput(referralCode) : null,
       });
 
       if (error) throw error;
@@ -74,7 +108,7 @@ export const useSecurePackages = () => {
       console.error('Error activating package:', error);
       toast({
         title: 'Error',
-        description: 'Failed to activate package',
+        description: error instanceof Error ? error.message : 'Failed to activate package',
         variant: 'destructive',
       });
       return { success: false, error: 'Failed to activate package' };
