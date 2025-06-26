@@ -14,27 +14,38 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }: AuthG
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading) {
-      if (requireAuth && !user) {
-        navigate('/');
-      } else if (!requireAuth && user) {
-        // Redirect authenticated users to appropriate dashboard
-        if (role === 'admin') {
-          navigate('/admin-dashboard');
-        } else {
-          navigate('/dashboard');
-        }
-      } else if (requireAdmin && role !== 'admin') {
-        // If user is not admin but trying to access admin area, redirect to regular dashboard
-        if (user) {
-          navigate('/dashboard');
-        } else {
-          navigate('/admin'); // Redirect to admin login if not logged in
-        }
+    if (loading) return; // Don't navigate while loading
+
+    if (requireAuth && !user) {
+      console.log('AuthGuard: Redirecting unauthenticated user to home');
+      navigate('/');
+      return;
+    }
+
+    if (!requireAuth && user) {
+      console.log('AuthGuard: Redirecting authenticated user to dashboard');
+      // Redirect authenticated users to appropriate dashboard
+      if (role === 'admin') {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/dashboard');
       }
+      return;
+    }
+
+    if (requireAdmin && role !== 'admin') {
+      console.log('AuthGuard: Redirecting non-admin user');
+      // If user is not admin but trying to access admin area
+      if (user) {
+        navigate('/dashboard');
+      } else {
+        navigate('/admin');
+      }
+      return;
     }
   }, [user, role, loading, requireAuth, requireAdmin, navigate]);
 
+  // Show loading state while auth is being determined
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
@@ -46,18 +57,38 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }: AuthG
     );
   }
 
+  // Handle authentication requirements
   if (requireAuth && !user) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Redirecting to login...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!requireAuth && user) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Redirecting to dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
   if (requireAdmin && role !== 'admin') {
-    return null;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Access denied. Redirecting...</p>
+        </div>
+      </div>
+    );
   }
 
+  // All checks passed, render children
   return <>{children}</>;
 };
 
