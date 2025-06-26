@@ -1,4 +1,3 @@
-
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import WalletSection from "@/components/dashboard/WalletSection";
 import ReferralSection from "@/components/dashboard/ReferralSection";
