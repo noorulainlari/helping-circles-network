@@ -35,7 +35,7 @@ export const useWallet = () => {
 
       setBalance(profile?.wallet_balance || 0);
 
-      // Fetch transaction history
+      // Fetch transaction history using the function
       const { data: walletHistory, error: historyError } = await supabase
         .rpc('get_wallet_history', {
           p_limit: 50,

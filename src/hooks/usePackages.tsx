@@ -2,9 +2,17 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Tables } from '@/integrations/supabase/types';
 
-type Package = Tables<'packages'>;
+interface Package {
+  id: string;
+  name: string;
+  amount: number;
+  roi_percentage: number;
+  roi_days: number;
+  referral_bonus: number;
+  status: boolean;
+  created_at: string;
+}
 
 export const usePackages = () => {
   const [packages, setPackages] = useState<Package[]>([]);
@@ -16,7 +24,7 @@ export const usePackages = () => {
       const { data, error } = await supabase
         .from('packages')
         .select('*')
-        .eq('is_active', true)
+        .eq('status', true)
         .order('amount', { ascending: true });
 
       if (error) throw error;

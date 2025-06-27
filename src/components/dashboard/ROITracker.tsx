@@ -31,34 +31,42 @@ const ROITracker = () => {
         .select(`
           total_roi_earned,
           package_activated_at,
-          packages!inner(amount, roi_percentage, roi_days)
+          package_id
         `)
         .eq('id', user.id)
         .eq('status', 'active')
         .single();
 
-      if (profile && profile.packages) {
-        const pkg = Array.isArray(profile.packages) ? profile.packages[0] : profile.packages;
-        const activatedAt = new Date(profile.package_activated_at);
-        const now = new Date();
-        const daysDiff = Math.floor((now.getTime() - activatedAt.getTime()) / (1000 * 60 * 60 * 24));
-        
-        // Get today's ROI
-        const { data: todayROI } = await supabase
-          .from('roi_distributions')
-          .select('amount')
-          .eq('user_id', user.id)
-          .gte('distributed_at', new Date().toISOString().split('T')[0])
+      if (profile && profile.package_id) {
+        // Get package details
+        const { data: packageData } = await supabase
+          .from('packages')
+          .select('amount, roi_percentage, roi_days')
+          .eq('id', profile.package_id)
           .single();
 
-        setROIData({
-          totalROI: profile.total_roi_earned || 0,
-          todaysROI: todayROI?.amount || 0,
-          daysCompleted: Math.max(0, daysDiff),
-          totalDays: pkg.roi_days,
-          packageAmount: pkg.amount,
-          roiPercentage: pkg.roi_percentage,
-        });
+        if (packageData && profile.package_activated_at) {
+          const activatedAt = new Date(profile.package_activated_at);
+          const now = new Date();
+          const daysDiff = Math.floor((now.getTime() - activatedAt.getTime()) / (1000 * 60 * 60 * 24));
+          
+          // Get today's ROI
+          const { data: todayROI } = await supabase
+            .from('roi_distributions')
+            .select('amount')
+            .eq('user_id', user.id)
+            .gte('created_at', new Date().toISOString().split('T')[0])
+            .single();
+
+          setROIData({
+            totalROI: profile.total_roi_earned || 0,
+            todaysROI: todayROI?.amount || 0,
+            daysCompleted: Math.max(0, daysDiff),
+            totalDays: packageData.roi_days,
+            packageAmount: packageData.amount,
+            roiPercentage: packageData.roi_percentage,
+          });
+        }
       }
     } catch (error) {
       console.error('Error fetching ROI data:', error);

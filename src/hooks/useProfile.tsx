@@ -14,6 +14,8 @@ interface Profile {
   total_roi_earned: number;
   total_referral_earned: number;
   total_withdrawn: number;
+  package_id: string | null;
+  package_activated_at: string | null;
   created_at: string;
 }
 

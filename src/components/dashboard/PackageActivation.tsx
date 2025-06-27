@@ -101,7 +101,7 @@ const PackageActivation = () => {
           <div className="text-center py-4">
             <Badge className="bg-green-100 text-green-800 mb-2">Active</Badge>
             <p className="text-gray-600">
-              Package activated on: {new Date(profile.package_activated_at || '').toLocaleDateString()}
+              Package activated on: {profile.package_activated_at ? new Date(profile.package_activated_at).toLocaleDateString() : 'N/A'}
             </p>
           </div>
         </CardContent>

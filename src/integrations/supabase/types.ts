@@ -39,6 +39,9 @@ export type Database = {
           created_at: string | null
           id: string
           name: string
+          referral_bonus: number | null
+          roi_days: number | null
+          roi_percentage: number | null
           status: boolean | null
         }
         Insert: {
@@ -46,6 +49,9 @@ export type Database = {
           created_at?: string | null
           id?: string
           name: string
+          referral_bonus?: number | null
+          roi_days?: number | null
+          roi_percentage?: number | null
           status?: boolean | null
         }
         Update: {
@@ -53,6 +59,9 @@ export type Database = {
           created_at?: string | null
           id?: string
           name?: string
+          referral_bonus?: number | null
+          roi_days?: number | null
+          roi_percentage?: number | null
           status?: boolean | null
         }
         Relationships: []
@@ -63,6 +72,8 @@ export type Database = {
           email: string
           full_name: string
           id: string
+          package_activated_at: string | null
+          package_id: string | null
           referral_code: string
           referred_by: string | null
           status: Database["public"]["Enums"]["user_status"] | null
@@ -76,6 +87,8 @@ export type Database = {
           email: string
           full_name: string
           id: string
+          package_activated_at?: string | null
+          package_id?: string | null
           referral_code: string
           referred_by?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
@@ -89,6 +102,8 @@ export type Database = {
           email?: string
           full_name?: string
           id?: string
+          package_activated_at?: string | null
+          package_id?: string | null
           referral_code?: string
           referred_by?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
@@ -98,6 +113,13 @@ export type Database = {
           wallet_balance?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "profiles_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "profiles_referred_by_fkey"
             columns: ["referred_by"]
@@ -351,6 +373,17 @@ export type Database = {
         Args: { p_user_id?: string }
         Returns: string
       }
+      get_wallet_history: {
+        Args: { p_limit?: number; p_offset?: number }
+        Returns: {
+          id: string
+          type: string
+          amount: number
+          status: string
+          description: string
+          created_at: string
+        }[]
+      }
       process_referral_commissions: {
         Args: {
           p_new_user_id: string
@@ -358,6 +391,14 @@ export type Database = {
           p_package_amount: number
         }
         Returns: undefined
+      }
+      request_withdrawal: {
+        Args: {
+          p_amount: number
+          p_payment_method: Database["public"]["Enums"]["payment_method"]
+          p_payment_details: Json
+        }
+        Returns: Json
       }
       rpc_activate_package: {
         Args: { package_id: string; referral_code?: string }
