@@ -4,10 +4,10 @@ import { useAuth } from '@/hooks/useAuth';
 import AuthGuard from '@/components/auth/AuthGuard';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Wallet, Users, TrendingUp, ArrowUpRight } from 'lucide-react';
+import { Wallet, Users, TrendingUp, ArrowUpRight, AlertCircle } from 'lucide-react';
 
 const Dashboard = () => {
-  const { profile, loading } = useProfile();
+  const { profile, loading, error } = useProfile();
   const { signOut } = useAuth();
 
   if (loading) {
@@ -21,6 +21,36 @@ const Dashboard = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Error Loading Profile</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()}>
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Profile Not Found</h2>
+          <p className="text-gray-600 mb-4">Unable to load your profile. Please try again.</p>
+          <Button onClick={() => window.location.reload()}>
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <AuthGuard requireAuth={true}>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -28,7 +58,7 @@ const Dashboard = () => {
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Welcome, {profile?.full_name}</h1>
+              <h1 className="text-3xl font-bold text-gray-800">Welcome, {profile.full_name}</h1>
               <p className="text-gray-600">Manage your P2P help account</p>
             </div>
             <Button onClick={signOut} variant="outline">
@@ -41,12 +71,12 @@ const Dashboard = () => {
             <CardHeader>
               <CardTitle className="flex items-center">
                 <div className={`w-3 h-3 rounded-full mr-2 ${
-                  profile?.status === 'active' ? 'bg-green-500' : 'bg-yellow-500'
+                  profile.status === 'active' ? 'bg-green-500' : 'bg-yellow-500'
                 }`}></div>
-                Account Status: {profile?.status?.toUpperCase()}
+                Account Status: {profile.status?.toUpperCase()}
               </CardTitle>
               <CardDescription>
-                {profile?.status === 'active' 
+                {profile.status === 'active' 
                   ? 'Your account is active and earning' 
                   : 'Activate your account by choosing a package'
                 }
@@ -62,7 +92,7 @@ const Dashboard = () => {
                 <Wallet className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">₹{profile?.wallet_balance?.toLocaleString() || '0'}</div>
+                <div className="text-2xl font-bold">₹{profile.wallet_balance?.toLocaleString() || '0'}</div>
                 <p className="text-xs text-muted-foreground">Available for withdrawal</p>
               </CardContent>
             </Card>
@@ -73,7 +103,7 @@ const Dashboard = () => {
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">₹{profile?.total_roi_earned?.toLocaleString() || '0'}</div>
+                <div className="text-2xl font-bold">₹{profile.total_roi_earned?.toLocaleString() || '0'}</div>
                 <p className="text-xs text-muted-foreground">Total return on investment</p>
               </CardContent>
             </Card>
@@ -84,7 +114,7 @@ const Dashboard = () => {
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">₹{profile?.total_referral_earned?.toLocaleString() || '0'}</div>
+                <div className="text-2xl font-bold">₹{profile.total_referral_earned?.toLocaleString() || '0'}</div>
                 <p className="text-xs text-muted-foreground">From referrals (3 levels)</p>
               </CardContent>
             </Card>
@@ -95,7 +125,7 @@ const Dashboard = () => {
                 <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">₹{profile?.total_withdrawn?.toLocaleString() || '0'}</div>
+                <div className="text-2xl font-bold">₹{profile.total_withdrawn?.toLocaleString() || '0'}</div>
                 <p className="text-xs text-muted-foreground">Successfully withdrawn</p>
               </CardContent>
             </Card>
@@ -110,11 +140,12 @@ const Dashboard = () => {
             <CardContent>
               <div className="flex items-center space-x-4">
                 <div className="bg-gray-100 px-4 py-2 rounded-lg font-mono text-lg">
-                  {profile?.referral_code}
+                  {profile.referral_code || 'Generating...'}
                 </div>
                 <Button 
-                  onClick={() => navigator.clipboard.writeText(profile?.referral_code || '')}
+                  onClick={() => navigator.clipboard.writeText(profile.referral_code || '')}
                   variant="outline"
+                  disabled={!profile.referral_code}
                 >
                   Copy Code
                 </Button>
@@ -124,7 +155,7 @@ const Dashboard = () => {
 
           {/* Action Buttons */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {profile?.status === 'inactive' && (
+            {profile.status === 'inactive' && (
               <Button className="h-16 text-lg">
                 Activate Account
               </Button>
