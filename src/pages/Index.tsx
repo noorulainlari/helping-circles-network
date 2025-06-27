@@ -1,224 +1,211 @@
 
-import Header from "@/components/layout/Header";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Users, 
-  TrendingUp, 
-  Shield, 
-  DollarSign, 
-  Network, 
+import { useAuth } from "@/hooks/useAuth";
+import {
+  ArrowRight,
+  Users,
+  TrendingUp,
+  Shield,
+  Wallet,
   Gift,
-  CheckCircle,
-  ArrowRight
+  CheckCircle
 } from "lucide-react";
 
 const Index = () => {
-  console.log('Index page rendering');
-  
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      <Header />
-      
+      {/* Header */}
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+              <Users className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-bold text-gray-800">P2P Help Network</span>
+          </div>
+          <div className="space-x-4">
+            {user ? (
+              <Link to="/dashboard">
+                <Button>Go to Dashboard</Button>
+              </Link>
+            ) : (
+              <Link to="/auth">
+                <Button>Sign In / Sign Up</Button>
+              </Link>
+            )}
+          </div>
+        </div>
+      </header>
+
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Join the Future of <br />
-            <span className="text-blue-600">Peer-to-Peer Finance</span>
+      <section className="py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-5xl font-bold text-gray-800 mb-6">
+            Join the P2P Help Network
           </h1>
-          <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-            Connect with a global community of investors and earn consistent returns 
-            through our secure helping circles network. Start your financial journey today.
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            A secure peer-to-peer help system where members support each other. Earn through referrals and ROI distributions.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8 py-3">
-              Get Started Today
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-3">
-              Learn More
-            </Button>
+          {!user && (
+            <Link to="/auth">
+              <Button size="lg" className="text-lg px-8 py-4">
+                Get Started Today <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
+          )}
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="py-16 bg-white/50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">
+            Why Choose Our Platform?
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <Card className="text-center">
+              <CardHeader>
+                <Shield className="w-12 h-12 text-blue-600 mx-auto mb-4" />
+                <CardTitle>Secure & Safe</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Advanced security measures and transparent processes ensure your safety.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center">
+              <CardHeader>
+                <TrendingUp className="w-12 h-12 text-green-600 mx-auto mb-4" />
+                <CardTitle>ROI Returns</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Earn regular returns on your investment through our distribution system.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center">
+              <CardHeader>
+                <Gift className="w-12 h-12 text-purple-600 mx-auto mb-4" />
+                <CardTitle>3-Level Referrals</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Earn 5%, 3%, and 1% commission from your referrals across 3 levels.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center">
+              <CardHeader>
+                <Wallet className="w-12 h-12 text-orange-600 mx-auto mb-4" />
+                <CardTitle>Easy Withdrawals</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Quick and hassle-free withdrawal process with multiple payment options.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center">
+              <CardHeader>
+                <Users className="w-12 h-12 text-indigo-600 mx-auto mb-4" />
+                <CardTitle>P2P Matching</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Automated peer-to-peer matching system for seamless transactions.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center">
+              <CardHeader>
+                <CheckCircle className="w-12 h-12 text-teal-600 mx-auto mb-4" />
+                <CardTitle>Transparent</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Complete transparency in all transactions and earnings history.
+                </CardDescription>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="bg-white py-16">
+      {/* How It Works */}
+      <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose Helping Circles?</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Our platform combines cutting-edge technology with proven financial strategies 
-              to deliver exceptional results for our community members.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                  <TrendingUp className="h-6 w-6 text-blue-600" />
-                </div>
-                <CardTitle>Consistent Returns</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Earn daily ROI with our proven investment packages. 
-                  Multiple tiers available to match your investment goals.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                  <Network className="h-6 w-6 text-green-600" />
-                </div>
-                <CardTitle>Referral Rewards</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Build your network and earn bonus commissions. 
-                  Multi-level referral system with attractive incentives.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardHeader>
-                <div className="mx-auto w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                  <Shield className="h-6 w-6 text-purple-600" />
-                </div>
-                <CardTitle>Secure Platform</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Bank-level security with transparent processes. 
-                  Your investments and personal data are fully protected.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Getting started is simple. Follow these easy steps to begin your journey 
-              with Helping Circles Network.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              {
-                step: "1",
-                title: "Sign Up",
-                description: "Create your account with basic information and verify your email."
-              },
-              {
-                step: "2", 
-                title: "Choose Package",
-                description: "Select an investment package that suits your budget and goals."
-              },
-              {
-                step: "3",
-                title: "Invite Friends",
-                description: "Share your referral code and build your network for bonus earnings."
-              },
-              {
-                step: "4",
-                title: "Earn Daily",
-                description: "Watch your investment grow with daily ROI and referral bonuses."
-              }
-            ].map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="mx-auto w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center text-xl font-bold mb-4">
-                  {item.step}
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                <p className="text-gray-600">{item.description}</p>
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">
+            How It Works
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-blue-600">1</span>
               </div>
-            ))}
+              <h3 className="text-xl font-semibold mb-2">Sign Up</h3>
+              <p className="text-gray-600">Create your account with basic information</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-green-600">2</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Choose Package</h3>
+              <p className="text-gray-600">Select from ₹1000, ₹1500, ₹3000, or ₹5000 packages</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-purple-600">3</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Get Matched</h3>
+              <p className="text-gray-600">System matches you with another member for P2P transfer</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl font-bold text-orange-600">4</span>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Start Earning</h3>
+              <p className="text-gray-600">Earn ROI and referral commissions regularly</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Packages Section */}
-      <section id="packages" className="bg-white py-16">
+      {/* Packages Preview */}
+      <section className="py-16 bg-white/50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Investment Packages</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Choose from our carefully designed investment packages. Each package offers 
-              different returns and benefits to match your investment capacity.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              {
-                name: "Starter Package",
-                amount: "$100",
-                roi: "1.0% Daily",
-                duration: "100 Days",
-                bonus: "$10 Referral",
-                features: ["Daily ROI Distribution", "Basic Support", "Mobile App Access"]
-              },
-              {
-                name: "Premium Package", 
-                amount: "$500",
-                roi: "1.2% Daily",
-                duration: "120 Days", 
-                bonus: "$25 Referral",
-                features: ["Higher Daily Returns", "Priority Support", "Advanced Analytics", "Bonus Rewards"],
-                popular: true
-              },
-              {
-                name: "VIP Package",
-                amount: "$1000",
-                roi: "1.5% Daily",
-                duration: "150 Days",
-                bonus: "$50 Referral", 
-                features: ["Maximum Returns", "VIP Support", "Exclusive Features", "Premium Benefits"]
-              }
-            ].map((pkg) => (
-              <Card key={pkg.name} className={`relative ${pkg.popular ? 'border-blue-500 border-2' : ''}`}>
-                {pkg.popular && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      Most Popular
-                    </span>
-                  </div>
-                )}
-                <CardHeader className="text-center">
-                  <CardTitle className="text-2xl">{pkg.name}</CardTitle>
-                  <div className="text-3xl font-bold text-blue-600">{pkg.amount}</div>
-                  <CardDescription>{pkg.roi} for {pkg.duration}</CardDescription>
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">
+            Available Packages
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1000, 1500, 3000, 5000].map((amount) => (
+              <Card key={amount} className="text-center">
+                <CardHeader>
+                  <CardTitle className="text-2xl text-blue-600">₹{amount.toLocaleString()}</CardTitle>
+                  <CardDescription>
+                    {amount === 1000 && 'Basic Package'}
+                    {amount === 1500 && 'Standard Package'}
+                    {amount === 3000 && 'Premium Package'}
+                    {amount === 5000 && 'VIP Package'}
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-center">
-                    <div className="flex items-center justify-center text-green-600 mb-2">
-                      <Gift className="h-5 w-5 mr-2" />
-                      <span className="font-medium">{pkg.bonus} Bonus</span>
-                    </div>
+                <CardContent>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <p>• Regular ROI distributions</p>
+                    <p>• 3-level referral bonuses</p>
+                    <p>• P2P withdrawal matching</p>
+                    <p>• Full transaction history</p>
                   </div>
-                  <ul className="space-y-2">
-                    {pkg.features.map((feature) => (
-                      <li key={feature} className="flex items-center">
-                        <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button className={`w-full ${pkg.popular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}>
-                    Select Package
-                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -226,82 +213,61 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            {[
-              { icon: Users, value: "10,000+", label: "Active Members" },
-              { icon: DollarSign, value: "$2M+", label: "Total Distributed" },
-              { icon: TrendingUp, value: "98%", label: "Success Rate" },
-              { icon: Network, value: "50+", label: "Countries" }
-            ].map((stat, index) => (
-              <div key={index} className="space-y-2">
-                <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <stat.icon className="h-6 w-6 text-blue-600" />
-                </div>
-                <div className="text-3xl font-bold text-gray-900">{stat.value}</div>
-                <div className="text-gray-600">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
-      <section className="bg-blue-600 text-white py-16">
+      <section className="py-20 bg-blue-600">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Start Your Journey?</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Join thousands of successful investors who are already earning with Helping Circles.
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Ready to Start Your Journey?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Join thousands of members who are already earning through our secure P2P help network.
           </p>
-          <Button size="lg" variant="secondary" className="text-lg px-8 py-3">
-            Create Account Now
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+          {!user && (
+            <Link to="/auth">
+              <Button size="lg" variant="secondary" className="text-lg px-8 py-4">
+                Join Now - It's Free <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
+          )}
         </div>
       </section>
 
       {/* Footer */}
-      <footer id="contact" className="bg-gray-900 text-white py-12">
+      <footer className="bg-gray-900 text-white py-12">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">Helping Circles</h3>
+              <div className="flex items-center space-x-2 mb-4">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                  <Users className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-bold">P2P Help Network</span>
+              </div>
               <p className="text-gray-400">
-                Building the future of peer-to-peer finance through secure, 
-                transparent, and profitable investment opportunities.
+                A secure and transparent peer-to-peer help system for mutual financial growth.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Quick Links</h4>
+              <h3 className="text-lg font-semibold mb-4">Features</h3>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#features" className="hover:text-white">Features</a></li>
-                <li><a href="#how-it-works" className="hover:text-white">How It Works</a></li>
-                <li><a href="#packages" className="hover:text-white">Packages</a></li>
-                <li><a href="#contact" className="hover:text-white">Contact</a></li>
+                <li>ROI Distributions</li>
+                <li>3-Level Referrals</li>
+                <li>P2P Matching</li>
+                <li>Secure Withdrawals</li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4">Support</h4>
+              <h3 className="text-lg font-semibold mb-4">Packages</h3>
               <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white">Help Center</a></li>
-                <li><a href="#" className="hover:text-white">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white">FAQ</a></li>
+                <li>Basic - ₹1,000</li>
+                <li>Standard - ₹1,500</li>
+                <li>Premium - ₹3,000</li>
+                <li>VIP - ₹5,000</li>
               </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Contact Info</h4>
-              <div className="space-y-2 text-gray-400">
-                <p>Email: support@helpingcircles.com</p>
-                <p>Phone: +1 (555) 123-4567</p>
-                <p>Address: 123 Finance St, Business City</p>
-              </div>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Helping Circles Network. All rights reserved.</p>
+            <p>&copy; 2024 P2P Help Network. All rights reserved.</p>
           </div>
         </div>
       </footer>

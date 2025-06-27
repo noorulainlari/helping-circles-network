@@ -38,103 +38,66 @@ export type Database = {
           amount: number
           created_at: string | null
           id: string
-          is_active: boolean | null
           name: string
-          referral_bonus: number
-          roi_days: number
-          roi_percentage: number
-          updated_at: string | null
+          status: boolean | null
         }
         Insert: {
           amount: number
           created_at?: string | null
           id?: string
-          is_active?: boolean | null
           name: string
-          referral_bonus?: number
-          roi_days?: number
-          roi_percentage?: number
-          updated_at?: string | null
+          status?: boolean | null
         }
         Update: {
           amount?: number
           created_at?: string | null
           id?: string
-          is_active?: boolean | null
           name?: string
-          referral_bonus?: number
-          roi_days?: number
-          roi_percentage?: number
-          updated_at?: string | null
+          status?: boolean | null
         }
         Relationships: []
       }
       profiles: {
         Row: {
-          city: string
-          country: string
           created_at: string | null
           email: string
           full_name: string
           id: string
-          mobile: string
-          package_activated_at: string | null
-          package_id: string | null
           referral_code: string
           referred_by: string | null
           status: Database["public"]["Enums"]["user_status"] | null
           total_referral_earned: number | null
           total_roi_earned: number | null
           total_withdrawn: number | null
-          updated_at: string | null
           wallet_balance: number | null
         }
         Insert: {
-          city: string
-          country: string
           created_at?: string | null
           email: string
           full_name: string
           id: string
-          mobile: string
-          package_activated_at?: string | null
-          package_id?: string | null
           referral_code: string
           referred_by?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
           total_referral_earned?: number | null
           total_roi_earned?: number | null
           total_withdrawn?: number | null
-          updated_at?: string | null
           wallet_balance?: number | null
         }
         Update: {
-          city?: string
-          country?: string
           created_at?: string | null
           email?: string
           full_name?: string
           id?: string
-          mobile?: string
-          package_activated_at?: string | null
-          package_id?: string | null
           referral_code?: string
           referred_by?: string | null
           status?: Database["public"]["Enums"]["user_status"] | null
           total_referral_earned?: number | null
           total_roi_earned?: number | null
           total_withdrawn?: number | null
-          updated_at?: string | null
           wallet_balance?: number | null
         }
         Relationships: [
-          {
-            foreignKeyName: "profiles_package_id_fkey"
-            columns: ["package_id"]
-            isOneToOne: false
-            referencedRelation: "packages"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "profiles_referred_by_fkey"
             columns: ["referred_by"]
@@ -148,34 +111,31 @@ export type Database = {
         Row: {
           amount: number
           created_at: string | null
+          from_user: string
           id: string
           level: number
-          package_amount: number
-          referred_user_id: string
           user_id: string
         }
         Insert: {
           amount: number
           created_at?: string | null
+          from_user: string
           id?: string
           level: number
-          package_amount: number
-          referred_user_id: string
           user_id: string
         }
         Update: {
           amount?: number
           created_at?: string | null
+          from_user?: string
           id?: string
           level?: number
-          package_amount?: number
-          referred_user_id?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "referral_commissions_referred_user_id_fkey"
-            columns: ["referred_user_id"]
+            foreignKeyName: "referral_commissions_from_user_fkey"
+            columns: ["from_user"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -192,36 +152,26 @@ export type Database = {
       roi_distributions: {
         Row: {
           amount: number
-          day_number: number
-          distributed_at: string | null
+          created_at: string | null
           id: string
-          package_id: string
+          note: string | null
           user_id: string
         }
         Insert: {
           amount: number
-          day_number: number
-          distributed_at?: string | null
+          created_at?: string | null
           id?: string
-          package_id: string
+          note?: string | null
           user_id: string
         }
         Update: {
           amount?: number
-          day_number?: number
-          distributed_at?: string | null
+          created_at?: string | null
           id?: string
-          package_id?: string
+          note?: string | null
           user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "roi_distributions_package_id_fkey"
-            columns: ["package_id"]
-            isOneToOne: false
-            referencedRelation: "packages"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "roi_distributions_user_id_fkey"
             columns: ["user_id"]
@@ -235,34 +185,28 @@ export type Database = {
         Row: {
           amount: number
           created_at: string | null
-          description: string | null
           id: string
-          reference_id: string | null
+          note: string | null
           status: Database["public"]["Enums"]["transaction_status"] | null
           type: Database["public"]["Enums"]["transaction_type"]
-          updated_at: string | null
           user_id: string
         }
         Insert: {
           amount: number
           created_at?: string | null
-          description?: string | null
           id?: string
-          reference_id?: string | null
+          note?: string | null
           status?: Database["public"]["Enums"]["transaction_status"] | null
           type: Database["public"]["Enums"]["transaction_type"]
-          updated_at?: string | null
           user_id: string
         }
         Update: {
           amount?: number
           created_at?: string | null
-          description?: string | null
           id?: string
-          reference_id?: string | null
+          note?: string | null
           status?: Database["public"]["Enums"]["transaction_status"] | null
           type?: Database["public"]["Enums"]["transaction_type"]
-          updated_at?: string | null
           user_id?: string
         }
         Relationships: [
@@ -277,30 +221,30 @@ export type Database = {
       }
       user_payment_methods: {
         Row: {
+          bank_details: Json | null
           created_at: string | null
           id: string
-          is_primary: boolean | null
-          is_verified: boolean | null
-          method_details: Json
-          method_type: Database["public"]["Enums"]["payment_method"]
+          preferred_method: Database["public"]["Enums"]["payment_method"]
+          upi: string | null
+          usdt_wallet: string | null
           user_id: string
         }
         Insert: {
+          bank_details?: Json | null
           created_at?: string | null
           id?: string
-          is_primary?: boolean | null
-          is_verified?: boolean | null
-          method_details: Json
-          method_type: Database["public"]["Enums"]["payment_method"]
+          preferred_method: Database["public"]["Enums"]["payment_method"]
+          upi?: string | null
+          usdt_wallet?: string | null
           user_id: string
         }
         Update: {
+          bank_details?: Json | null
           created_at?: string | null
           id?: string
-          is_primary?: boolean | null
-          is_verified?: boolean | null
-          method_details?: Json
-          method_type?: Database["public"]["Enums"]["payment_method"]
+          preferred_method?: Database["public"]["Enums"]["payment_method"]
+          upi?: string | null
+          usdt_wallet?: string | null
           user_id?: string
         }
         Relationships: [
@@ -315,14 +259,20 @@ export type Database = {
       }
       user_roles: {
         Row: {
+          created_at: string | null
+          id: string
           role: string
           user_id: string
         }
         Insert: {
-          role: string
+          created_at?: string | null
+          id?: string
+          role?: string
           user_id: string
         }
         Update: {
+          created_at?: string | null
+          id?: string
           role?: string
           user_id?: string
         }
@@ -330,50 +280,41 @@ export type Database = {
       }
       withdrawals: {
         Row: {
-          admin_notes: string | null
           amount: number
           created_at: string | null
           id: string
-          matched_with: string | null
-          payment_details: Json
+          matched_user_id: string | null
           payment_method: Database["public"]["Enums"]["payment_method"]
-          payment_proof_url: string | null
+          proof_url: string | null
           status: Database["public"]["Enums"]["withdrawal_status"] | null
-          updated_at: string | null
           user_id: string
         }
         Insert: {
-          admin_notes?: string | null
           amount: number
           created_at?: string | null
           id?: string
-          matched_with?: string | null
-          payment_details: Json
+          matched_user_id?: string | null
           payment_method: Database["public"]["Enums"]["payment_method"]
-          payment_proof_url?: string | null
+          proof_url?: string | null
           status?: Database["public"]["Enums"]["withdrawal_status"] | null
-          updated_at?: string | null
           user_id: string
         }
         Update: {
-          admin_notes?: string | null
           amount?: number
           created_at?: string | null
           id?: string
-          matched_with?: string | null
-          payment_details?: Json
+          matched_user_id?: string | null
           payment_method?: Database["public"]["Enums"]["payment_method"]
-          payment_proof_url?: string | null
+          proof_url?: string | null
           status?: Database["public"]["Enums"]["withdrawal_status"] | null
-          updated_at?: string | null
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "withdrawals_matched_with_fkey"
-            columns: ["matched_with"]
+            foreignKeyName: "withdrawals_matched_user_id_fkey"
+            columns: ["matched_user_id"]
             isOneToOne: false
-            referencedRelation: "withdrawals"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
@@ -410,17 +351,6 @@ export type Database = {
         Args: { p_user_id?: string }
         Returns: string
       }
-      get_wallet_history: {
-        Args: { p_user_id?: string; p_limit?: number; p_offset?: number }
-        Returns: {
-          id: string
-          type: Database["public"]["Enums"]["transaction_type"]
-          amount: number
-          status: Database["public"]["Enums"]["transaction_status"]
-          description: string
-          created_at: string
-        }[]
-      }
       process_referral_commissions: {
         Args: {
           p_new_user_id: string
@@ -428,14 +358,6 @@ export type Database = {
           p_package_amount: number
         }
         Returns: undefined
-      }
-      request_withdrawal: {
-        Args: {
-          p_amount: number
-          p_payment_method: Database["public"]["Enums"]["payment_method"]
-          p_payment_details: Json
-        }
-        Returns: Json
       }
       rpc_activate_package: {
         Args: { package_id: string; referral_code?: string }
@@ -447,19 +369,14 @@ export type Database = {
       }
     }
     Enums: {
-      payment_method: "upi" | "gpay" | "bank_transfer" | "usdt"
-      transaction_status: "pending" | "completed" | "failed" | "cancelled"
-      transaction_type:
-        | "deposit"
-        | "withdrawal"
-        | "roi"
-        | "referral_bonus"
-        | "package_purchase"
+      payment_method: "upi" | "bank" | "usdt"
+      transaction_status: "pending" | "completed" | "failed"
+      transaction_type: "activation" | "roi" | "referral" | "withdrawal"
       user_status: "inactive" | "active" | "suspended"
       withdrawal_status:
         | "pending"
         | "matched"
-        | "payment_uploaded"
+        | "proof_uploaded"
         | "completed"
         | "rejected"
     }
@@ -577,20 +494,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      payment_method: ["upi", "gpay", "bank_transfer", "usdt"],
-      transaction_status: ["pending", "completed", "failed", "cancelled"],
-      transaction_type: [
-        "deposit",
-        "withdrawal",
-        "roi",
-        "referral_bonus",
-        "package_purchase",
-      ],
+      payment_method: ["upi", "bank", "usdt"],
+      transaction_status: ["pending", "completed", "failed"],
+      transaction_type: ["activation", "roi", "referral", "withdrawal"],
       user_status: ["inactive", "active", "suspended"],
       withdrawal_status: [
         "pending",
         "matched",
-        "payment_uploaded",
+        "proof_uploaded",
         "completed",
         "rejected",
       ],

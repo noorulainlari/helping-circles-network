@@ -1,33 +1,16 @@
 
-import DashboardHeader from "@/components/dashboard/DashboardHeader";
-import WalletSection from "@/components/dashboard/WalletSection";
-import ReferralSection from "@/components/dashboard/ReferralSection";
-import WithdrawalSection from "@/components/dashboard/WithdrawalSection";
-import PackageActivation from "@/components/dashboard/PackageActivation";
-import WithdrawalForm from "@/components/dashboard/WithdrawalForm";
-import WalletHistory from "@/components/dashboard/WalletHistory";
-import ROITracker from "@/components/dashboard/ROITracker";
-import { useProfile } from "@/hooks/useProfile";
-import { useWallet } from "@/hooks/useWallet";
-import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { RefreshCw, LogOut, AlertCircle } from "lucide-react";
+import { useProfile } from '@/hooks/useProfile';
+import { useAuth } from '@/hooks/useAuth';
+import AuthGuard from '@/components/auth/AuthGuard';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Wallet, Users, TrendingUp, ArrowUpRight } from 'lucide-react';
 
 const Dashboard = () => {
-  const { user, loading: authLoading, signOut } = useAuth();
-  const { profile, loading: profileLoading, refetch } = useProfile();
-  const { balance } = useWallet();
+  const { profile, loading } = useProfile();
+  const { signOut } = useAuth();
 
-  console.log('Dashboard render state:', {
-    authLoading,
-    profileLoading,
-    userId: user?.id,
-    profile: profile?.id,
-    hasProfile: !!profile
-  });
-
-  // Show loading while auth or profile is loading
-  if (authLoading || profileLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
         <div className="text-center">
@@ -38,120 +21,124 @@ const Dashboard = () => {
     );
   }
 
-  // Show login prompt if no user
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-6">
-          <div className="mb-4">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <AlertCircle className="text-blue-600 text-2xl w-8 h-8" />
+  return (
+    <AuthGuard requireAuth={true}>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+        <div className="container mx-auto px-4 py-8">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800">Welcome, {profile?.full_name}</h1>
+              <p className="text-gray-600">Manage your P2P help account</p>
             </div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">Access Required</h2>
-            <p className="text-gray-600 mb-4">
-              Please log in to access your dashboard.
-            </p>
-          </div>
-          <Button 
-            onClick={() => window.location.href = '/'} 
-            className="w-full"
-          >
-            Go to Login
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Show profile not found message if no profile
-  if (!profile) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto p-6">
-          <div className="mb-4">
-            <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <AlertCircle className="text-orange-600 text-2xl w-8 h-8" />
-            </div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">Profile Setup Required</h2>
-            <p className="text-gray-600 mb-4">
-              Your profile could not be loaded. This might be because your account is still being set up or there was an error.
-            </p>
-            <p className="text-sm text-gray-500 mb-4">
-              User ID: {user.id}
-            </p>
-          </div>
-          <div className="space-y-2">
-            <Button 
-              onClick={refetch}
-              className="w-full flex items-center justify-center gap-2"
-              disabled={profileLoading}
-            >
-              <RefreshCw className={`w-4 h-4 ${profileLoading ? 'animate-spin' : ''}`} />
-              Refresh Profile
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={signOut}
-              className="w-full flex items-center justify-center gap-2"
-            >
-              <LogOut className="w-4 h-4" />
+            <Button onClick={signOut} variant="outline">
               Sign Out
             </Button>
           </div>
-        </div>
-      </div>
-    );
-  }
 
-  // Main dashboard with profile data
-  const userData = {
-    name: profile.full_name || 'User',
-    userId: profile.referral_code || 'N/A',
-    email: profile.email || 'No email',
-    status: profile.status || 'inactive',
-    walletBalance: profile.wallet_balance || 0,
-    totalROI: profile.total_roi_earned || 0,
-    totalReferralIncome: profile.total_referral_earned || 0,
-    totalWithdrawn: profile.total_withdrawn || 0,
-    currentPackage: profile.package_id ? 'Active Package' : null,
-    joinDate: profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A',
-  };
+          {/* Status Card */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <div className={`w-3 h-3 rounded-full mr-2 ${
+                  profile?.status === 'active' ? 'bg-green-500' : 'bg-yellow-500'
+                }`}></div>
+                Account Status: {profile?.status?.toUpperCase()}
+              </CardTitle>
+              <CardDescription>
+                {profile?.status === 'active' 
+                  ? 'Your account is active and earning' 
+                  : 'Activate your account by choosing a package'
+                }
+              </CardDescription>
+            </CardHeader>
+          </Card>
 
-  console.log('Rendering dashboard with userData:', userData);
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Wallet Balance</CardTitle>
+                <Wallet className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">₹{profile?.wallet_balance?.toLocaleString() || '0'}</div>
+                <p className="text-xs text-muted-foreground">Available for withdrawal</p>
+              </CardContent>
+            </Card>
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-      <DashboardHeader user={userData} />
-      
-      <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Wallet & Package */}
-          <div className="lg:col-span-2 space-y-6">
-            <WalletSection user={userData} />
-            
-            {userData.status === 'inactive' ? (
-              <PackageActivation />
-            ) : (
-              <ROITracker />
-            )}
-            
-            <WalletHistory />
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">ROI Earned</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">₹{profile?.total_roi_earned?.toLocaleString() || '0'}</div>
+                <p className="text-xs text-muted-foreground">Total return on investment</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Referral Earned</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">₹{profile?.total_referral_earned?.toLocaleString() || '0'}</div>
+                <p className="text-xs text-muted-foreground">From referrals (3 levels)</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Withdrawn</CardTitle>
+                <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">₹{profile?.total_withdrawn?.toLocaleString() || '0'}</div>
+                <p className="text-xs text-muted-foreground">Successfully withdrawn</p>
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Right Column - Actions & Info */}
-          <div className="space-y-6">
-            <ReferralSection userId={userData.userId} />
-            
-            {userData.status === 'active' && (
-              <>
-                <WithdrawalForm walletBalance={balance} />
-                <WithdrawalSection user={userData} />
-              </>
+          {/* Referral Code */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>Your Referral Code</CardTitle>
+              <CardDescription>Share this code to earn referral bonuses</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-4">
+                <div className="bg-gray-100 px-4 py-2 rounded-lg font-mono text-lg">
+                  {profile?.referral_code}
+                </div>
+                <Button 
+                  onClick={() => navigator.clipboard.writeText(profile?.referral_code || '')}
+                  variant="outline"
+                >
+                  Copy Code
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Action Buttons */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {profile?.status === 'inactive' && (
+              <Button className="h-16 text-lg">
+                Activate Account
+              </Button>
             )}
+            <Button variant="outline" className="h-16 text-lg">
+              Request Withdrawal
+            </Button>
+            <Button variant="outline" className="h-16 text-lg">
+              View Transactions
+            </Button>
           </div>
         </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 };
 

@@ -1,25 +1,37 @@
-import { useState, useEffect, useCallback } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Tables } from '@/integrations/supabase/types';
 
-type Profile = Tables<'profiles'>;
+interface Profile {
+  id: string;
+  full_name: string;
+  email: string;
+  referral_code: string;
+  referred_by: string | null;
+  status: 'inactive' | 'active' | 'suspended';
+  wallet_balance: number;
+  total_roi_earned: number;
+  total_referral_earned: number;
+  total_withdrawn: number;
+  created_at: string;
+}
 
 export const useProfile = () => {
   const { user, loading: authLoading } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchProfile = useCallback(async () => {
-    console.log('Fetching profile for user:', user?.id);
-    
+  const fetchProfile = async () => {
+    if (!user) {
+      setProfile(null);
+      setLoading(false);
+      return;
+    }
+
     try {
-      if (!user) {
-        console.log('No user found, setting profile to null');
-        setProfile(null);
-        return;
-      }
-
+      setLoading(true);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -28,35 +40,31 @@ export const useProfile = () => {
 
       if (error) {
         console.error('Error fetching profile:', error);
-        if (error.code === 'PGRST116') {
-          console.log('Profile not found for user, setting to null');
-          setProfile(null);
-        } else {
-          console.error('Database error:', error);
-          setProfile(null);
-        }
+        setError(error.message);
+        setProfile(null);
       } else {
-        console.log('Profile fetched successfully:', data);
         setProfile(data);
+        setError(null);
       }
-    } catch (error) {
-      console.error('Unexpected error fetching profile:', error);
+    } catch (err: any) {
+      console.error('Unexpected error:', err);
+      setError('Failed to fetch profile');
       setProfile(null);
     } finally {
-      console.log('Setting profile loading to false');
       setLoading(false);
     }
-  }, [user]);
+  };
 
   useEffect(() => {
-    // Only fetch profile if auth is not loading
     if (!authLoading) {
       fetchProfile();
     }
-  }, [fetchProfile, authLoading]);
+  }, [user, authLoading]);
 
-  // Keep loading true while auth is loading
-  const isLoading = authLoading || loading;
-
-  return { profile, loading: isLoading, refetch: fetchProfile };
+  return { 
+    profile, 
+    loading: authLoading || loading, 
+    error, 
+    refetch: fetchProfile 
+  };
 };

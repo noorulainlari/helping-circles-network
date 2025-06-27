@@ -14,17 +14,14 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }: AuthG
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (loading) return; // Don't navigate while loading
+    if (loading) return;
 
     if (requireAuth && !user) {
-      console.log('AuthGuard: Redirecting unauthenticated user to home');
-      navigate('/');
+      navigate('/auth');
       return;
     }
 
     if (!requireAuth && user) {
-      console.log('AuthGuard: Redirecting authenticated user to dashboard');
-      // Redirect authenticated users to appropriate dashboard
       if (role === 'admin') {
         navigate('/admin-dashboard');
       } else {
@@ -34,18 +31,15 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }: AuthG
     }
 
     if (requireAdmin && role !== 'admin') {
-      console.log('AuthGuard: Redirecting non-admin user');
-      // If user is not admin but trying to access admin area
       if (user) {
         navigate('/dashboard');
       } else {
-        navigate('/admin');
+        navigate('/auth');
       }
       return;
     }
   }, [user, role, loading, requireAuth, requireAdmin, navigate]);
 
-  // Show loading state while auth is being determined
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
@@ -57,7 +51,6 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }: AuthG
     );
   }
 
-  // Handle authentication requirements
   if (requireAuth && !user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
@@ -88,7 +81,6 @@ const AuthGuard = ({ children, requireAuth = true, requireAdmin = false }: AuthG
     );
   }
 
-  // All checks passed, render children
   return <>{children}</>;
 };
 
