@@ -17,7 +17,6 @@ const nextConfig = {
         hostname: "**.supabase.co",
       },
     ],
-    unoptimized: true,
   },
   async headers() {
     return [
