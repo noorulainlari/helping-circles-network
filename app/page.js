@@ -16,7 +16,7 @@ export default function HomePage() {
           Connect, Support, and Grow Together
         </h2>
         <p style={{ color: "#6b7280", lineHeight: "1.6" }}>
-          Join meaningful helping circles where people support each other's goals, share resources, and build lasting
+          Join meaningful helping circles where people support each other goals, share resources, and build lasting
           connections.
         </p>
       </div>
@@ -75,9 +75,7 @@ export default function HomePage() {
         }}
       >
         <h3 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "16px" }}>🤝 Helping Circles</h3>
-        <p style={{ color: "#9ca3af", margin: 0 }}>
-          Building meaningful connections and supportive communities where people help each other grow and thrive.
-        </p>
+        <p style={{ color: "#9ca3af", margin: 0 }}>Building meaningful connections and supportive communities.</p>
       </div>
     </div>
   )
