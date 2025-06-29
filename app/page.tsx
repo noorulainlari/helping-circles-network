@@ -1,112 +1,230 @@
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">Helping Circles</h1>
-            <nav className="space-x-6">
-              <a href="/about" className="text-gray-600 hover:text-gray-900">
-                About
-              </a>
-              <a href="/circles" className="text-gray-600 hover:text-gray-900">
-                Circles
-              </a>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Get Started</button>
-            </nav>
-          </div>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #f0f9ff 0%, #faf5ff 100%)" }}>
+      <header style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", padding: "1rem 0" }}>
+        <div
+          style={{
+            maxWidth: "1200px",
+            margin: "0 auto",
+            padding: "0 1rem",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#1f2937", margin: 0 }}>Helping Circles</h1>
+          <nav style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
+            <a href="/about" style={{ color: "#6b7280", textDecoration: "none" }}>
+              About
+            </a>
+            <a href="/circles" style={{ color: "#6b7280", textDecoration: "none" }}>
+              Circles
+            </a>
+            <button
+              style={{
+                background: "#2563eb",
+                color: "white",
+                padding: "0.5rem 1rem",
+                border: "none",
+                borderRadius: "0.375rem",
+                cursor: "pointer",
+              }}
+            >
+              Get Started
+            </button>
+          </nav>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-16">
-        <div className="text-center">
-          <h2 className="text-5xl font-bold text-gray-900 mb-6">
-            Connect, Support, and <span className="text-blue-600">Grow Together</span>
-          </h2>
+      <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "4rem 1rem", textAlign: "center" }}>
+        <h2
+          style={{
+            fontSize: "3rem",
+            fontWeight: "bold",
+            color: "#1f2937",
+            marginBottom: "1.5rem",
+            lineHeight: "1.2",
+          }}
+        >
+          Connect, Support, and <span style={{ color: "#2563eb" }}>Grow Together</span>
+        </h2>
 
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Join meaningful helping circles where people support each other's goals, share resources, and build lasting
-            connections.
-          </p>
+        <p
+          style={{
+            fontSize: "1.25rem",
+            color: "#6b7280",
+            marginBottom: "2rem",
+            maxWidth: "48rem",
+            margin: "0 auto 2rem auto",
+          }}
+        >
+          Join meaningful helping circles where people support each other's goals, share resources, and build lasting
+          connections.
+        </p>
 
-          <div className="flex justify-center space-x-4 mb-16">
-            <button className="bg-blue-600 text-white px-8 py-3 rounded-md text-lg font-medium hover:bg-blue-700">
-              Start Your Circle
-            </button>
-            <button className="border border-gray-300 text-gray-700 px-8 py-3 rounded-md text-lg font-medium hover:bg-gray-50">
-              Browse Circles
-            </button>
+        <div style={{ display: "flex", justifyContent: "center", gap: "1rem", marginBottom: "4rem", flexWrap: "wrap" }}>
+          <button
+            style={{
+              background: "#2563eb",
+              color: "white",
+              padding: "0.75rem 2rem",
+              border: "none",
+              borderRadius: "0.375rem",
+              fontSize: "1.125rem",
+              fontWeight: "500",
+              cursor: "pointer",
+            }}
+          >
+            Start Your Circle
+          </button>
+          <button
+            style={{
+              background: "transparent",
+              color: "#374151",
+              padding: "0.75rem 2rem",
+              border: "1px solid #d1d5db",
+              borderRadius: "0.375rem",
+              fontSize: "1.125rem",
+              fontWeight: "500",
+              cursor: "pointer",
+            }}
+          >
+            Browse Circles
+          </button>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "2rem" }}>
+          <div style={{ textAlign: "center" }}>
+            <div
+              style={{
+                background: "#dbeafe",
+                width: "4rem",
+                height: "4rem",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 1rem auto",
+                fontSize: "1.5rem",
+              }}
+            >
+              👥
+            </div>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", marginBottom: "0.5rem", color: "#1f2937" }}>
+              10,000+ Members
+            </h3>
+            <p style={{ color: "#6b7280", margin: 0 }}>Active community members</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">👥</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">10,000+ Members</h3>
-              <p className="text-gray-600">Active community members</p>
+          <div style={{ textAlign: "center" }}>
+            <div
+              style={{
+                background: "#f3e8ff",
+                width: "4rem",
+                height: "4rem",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 1rem auto",
+                fontSize: "1.5rem",
+              }}
+            >
+              ❤️
             </div>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", marginBottom: "0.5rem", color: "#1f2937" }}>
+              500+ Circles
+            </h3>
+            <p style={{ color: "#6b7280", margin: 0 }}>Active helping circles</p>
+          </div>
 
-            <div className="text-center">
-              <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">❤️</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">500+ Circles</h3>
-              <p className="text-gray-600">Active helping circles</p>
+          <div style={{ textAlign: "center" }}>
+            <div
+              style={{
+                background: "#dcfce7",
+                width: "4rem",
+                height: "4rem",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 1rem auto",
+                fontSize: "1.5rem",
+              }}
+            >
+              🌍
             </div>
-
-            <div className="text-center">
-              <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🌍</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">50+ Countries</h3>
-              <p className="text-gray-600">Global community reach</p>
-            </div>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", marginBottom: "0.5rem", color: "#1f2937" }}>
+              50+ Countries
+            </h3>
+            <p style={{ color: "#6b7280", margin: 0 }}>Global community reach</p>
           </div>
         </div>
       </main>
 
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="col-span-2">
-              <h3 className="text-xl font-bold mb-4">Helping Circles</h3>
-              <p className="text-gray-400 mb-4">Building meaningful connections and supportive communities.</p>
+      <footer style={{ background: "#111827", color: "white", padding: "3rem 0" }}>
+        <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 1rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "2rem" }}>
+            <div>
+              <h3 style={{ fontSize: "1.25rem", fontWeight: "bold", marginBottom: "1rem" }}>Helping Circles</h3>
+              <p style={{ color: "#9ca3af", marginBottom: "1rem" }}>
+                Building meaningful connections and supportive communities.
+              </p>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Platform</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="/circles">Browse Circles</a>
+              <h4 style={{ fontWeight: "600", marginBottom: "1rem" }}>Platform</h4>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, color: "#9ca3af" }}>
+                <li style={{ marginBottom: "0.5rem" }}>
+                  <a href="/circles" style={{ color: "#9ca3af", textDecoration: "none" }}>
+                    Browse Circles
+                  </a>
                 </li>
-                <li>
-                  <a href="/create">Create Circle</a>
+                <li style={{ marginBottom: "0.5rem" }}>
+                  <a href="/create" style={{ color: "#9ca3af", textDecoration: "none" }}>
+                    Create Circle
+                  </a>
                 </li>
-                <li>
-                  <a href="/events">Events</a>
+                <li style={{ marginBottom: "0.5rem" }}>
+                  <a href="/events" style={{ color: "#9ca3af", textDecoration: "none" }}>
+                    Events
+                  </a>
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="/about">About</a>
+              <h4 style={{ fontWeight: "600", marginBottom: "1rem" }}>Company</h4>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, color: "#9ca3af" }}>
+                <li style={{ marginBottom: "0.5rem" }}>
+                  <a href="/about" style={{ color: "#9ca3af", textDecoration: "none" }}>
+                    About
+                  </a>
                 </li>
-                <li>
-                  <a href="/contact">Contact</a>
+                <li style={{ marginBottom: "0.5rem" }}>
+                  <a href="/contact" style={{ color: "#9ca3af", textDecoration: "none" }}>
+                    Contact
+                  </a>
                 </li>
-                <li>
-                  <a href="/privacy">Privacy</a>
+                <li style={{ marginBottom: "0.5rem" }}>
+                  <a href="/privacy" style={{ color: "#9ca3af", textDecoration: "none" }}>
+                    Privacy
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 Helping Circles Network. All rights reserved.</p>
+          <div
+            style={{
+              borderTop: "1px solid #374151",
+              marginTop: "2rem",
+              paddingTop: "2rem",
+              textAlign: "center",
+              color: "#9ca3af",
+            }}
+          >
+            <p style={{ margin: 0 }}>&copy; 2024 Helping Circles Network. All rights reserved.</p>
           </div>
         </div>
       </footer>

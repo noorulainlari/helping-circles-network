@@ -1,12 +1,4 @@
 import type React from "react"
-import "./globals.css"
-
-export const metadata = {
-  title: "Helping Circles Network",
-  description: "Connect, support, and grow together",
-    generator: 'v0.dev'
-}
-
 export default function RootLayout({
   children,
 }: {
@@ -14,7 +6,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <head>
+        <title>Helping Circles Network</title>
+        <meta name="description" content="Connect, support, and grow together" />
+      </head>
+      <body style={{ margin: 0, fontFamily: "system-ui, sans-serif" }}>{children}</body>
     </html>
   )
 }
+
+
+import './globals.css'
+
+export const metadata = {
+      generator: 'v0.dev'
+    };
