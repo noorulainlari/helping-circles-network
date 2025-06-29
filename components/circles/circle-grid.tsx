@@ -6,123 +6,52 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Users, MapPin, Globe } from "lucide-react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase"
 import Link from "next/link"
 
 interface Circle {
   id: string
   name: string
-  description: string | null
+  description: string
   category: string
-  location: string | null
+  location: string
   is_virtual: boolean
   member_count: number
-  image_url?: string | null
+  image_url?: string
   created_by: {
-    full_name: string | null
-    avatar_url?: string | null
+    full_name: string
+    avatar_url?: string
   }
 }
 
 export function CircleGrid() {
   const [circles, setCircles] = useState<Circle[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     async function fetchCircles() {
-      try {
-        // First, let's try a simpler query to avoid potential issues
-        const { data, error } = await supabase
-          .from("circles")
-          .select(`
-            id,
-            name,
-            description,
-            category,
-            location,
-            is_virtual,
-            image_url,
-            created_by,
-            profiles!circles_created_by_fkey(full_name, avatar_url)
-          `)
-          .eq("is_private", false)
-          .order("created_at", { ascending: false })
-          .limit(12)
+      const { data, error } = await supabase
+        .from("circles")
+        .select(`
+          *,
+          created_by:profiles!circles_created_by_fkey(full_name, avatar_url),
+          circle_members(count)
+        `)
+        .eq("is_private", false)
+        .order("created_at", { ascending: false })
 
-        if (error) {
-          console.error("Error fetching circles:", error)
-          setError(error.message)
-          // Set some mock data for development
-          setCircles([
-            {
-              id: "1",
-              name: "Tech Innovators",
-              description: "A community for technology enthusiasts and innovators",
-              category: "Technology",
-              location: "San Francisco, CA",
-              is_virtual: true,
-              member_count: 25,
-              created_by: {
-                full_name: "John Doe",
-                avatar_url: null,
-              },
-            },
-            {
-              id: "2",
-              name: "Sustainable Living",
-              description: "Learn and share tips for eco-friendly living",
-              category: "Environment",
-              location: "Portland, OR",
-              is_virtual: false,
-              member_count: 18,
-              created_by: {
-                full_name: "Jane Smith",
-                avatar_url: null,
-              },
-            },
-          ])
-        } else {
-          const formattedCircles: Circle[] =
-            data?.map((circle: any) => ({
-              id: circle.id,
-              name: circle.name || "Untitled Circle",
-              description: circle.description,
-              category: circle.category || "General",
-              location: circle.location,
-              is_virtual: circle.is_virtual || false,
-              member_count: 0, // We'll calculate this separately
-              image_url: circle.image_url,
-              created_by: {
-                full_name: circle.profiles?.full_name || "Anonymous",
-                avatar_url: circle.profiles?.avatar_url,
-              },
-            })) || []
-          setCircles(formattedCircles)
-        }
-      } catch (err) {
-        console.error("Unexpected error:", err)
-        setError("Failed to load circles")
-        // Set mock data as fallback
-        setCircles([
-          {
-            id: "1",
-            name: "Welcome Circle",
-            description: "A place to get started with Helping Circles",
-            category: "General",
-            location: null,
-            is_virtual: true,
-            member_count: 1,
-            created_by: {
-              full_name: "System",
-              avatar_url: null,
-            },
-          },
-        ])
-      } finally {
-        setLoading(false)
+      if (error) {
+        console.error("Error fetching circles:", error)
+      } else {
+        const formattedCircles =
+          data?.map((circle) => ({
+            ...circle,
+            member_count: circle.circle_members?.[0]?.count || 0,
+          })) || []
+        setCircles(formattedCircles)
       }
+      setLoading(false)
     }
 
     fetchCircles()
@@ -147,15 +76,6 @@ export function CircleGrid() {
     )
   }
 
-  if (error && circles.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <p className="text-gray-500 mb-4">Unable to load circles at the moment.</p>
-        <p className="text-sm text-gray-400">Error: {error}</p>
-      </div>
-    )
-  }
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {circles.map((circle) => (
@@ -174,28 +94,24 @@ export function CircleGrid() {
                       Virtual
                     </div>
                   ) : (
-                    circle.location && (
-                      <div className="flex items-center text-xs text-gray-500">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        {circle.location}
-                      </div>
-                    )
+                    <div className="flex items-center text-xs text-gray-500">
+                      <MapPin className="h-3 w-3 mr-1" />
+                      {circle.location}
+                    </div>
                   )}
                 </div>
               </div>
             </div>
-            <CardDescription className="text-sm text-gray-600 line-clamp-2">
-              {circle.description || "No description available"}
-            </CardDescription>
+            <CardDescription className="text-sm text-gray-600 line-clamp-2">{circle.description}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
                 <Avatar className="h-6 w-6">
-                  <AvatarImage src={circle.created_by.avatar_url || undefined} />
+                  <AvatarImage src={circle.created_by.avatar_url || "/placeholder.svg"} />
                   <AvatarFallback className="text-xs">{circle.created_by.full_name?.charAt(0) || "U"}</AvatarFallback>
                 </Avatar>
-                <span className="text-xs text-gray-500">by {circle.created_by.full_name || "Anonymous"}</span>
+                <span className="text-xs text-gray-500">by {circle.created_by.full_name}</span>
               </div>
               <div className="flex items-center text-xs text-gray-500">
                 <Users className="h-3 w-3 mr-1" />

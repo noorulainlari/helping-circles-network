@@ -3,7 +3,4 @@ import { cookies } from "next/headers"
 
 export const createClient = () => createClientComponentClient()
 
-export const createServerClient = () => {
-  const cookieStore = cookies()
-  return createServerComponentClient({ cookies: () => cookieStore })
-}
+export const createServerClient = () => createServerComponentClient({ cookies })
