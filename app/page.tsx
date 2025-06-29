@@ -2,7 +2,14 @@
 
 export default function HomePage() {
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #f0f9ff 0%, #faf5ff 100%)" }}>
+    <div
+      style={{
+        padding: "2rem",
+        fontFamily: "system-ui, sans-serif",
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #f0f9ff 0%, #faf5ff 100%)",
+      }}
+    >
       {/* Header */}
       <header style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", padding: "1rem 0" }}>
         <div
@@ -44,174 +51,48 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "4rem 1rem", textAlign: "center" }}>
-        <h1 style={{ fontSize: "2rem", fontWeight: "bold", color: "#1f2937", marginBottom: "1rem" }}>
-          Helping Circles Network
-        </h1>
+        <h1 style={{ color: "#2563eb", fontSize: "2rem", marginBottom: "1rem" }}>🤝 Helping Circles Network</h1>
         <p
           style={{
-            fontSize: "1.25rem",
             color: "#6b7280",
+            fontSize: "1.125rem",
             marginBottom: "2rem",
-            maxWidth: "48rem",
-            margin: "0 auto 2rem auto",
-            lineHeight: "1.6",
           }}
         >
           Welcome to our community platform!
         </p>
 
-        <h2
-          style={{
-            fontSize: "clamp(2rem, 5vw, 3.5rem)",
-            fontWeight: "bold",
-            color: "#1f2937",
-            marginBottom: "1.5rem",
-            lineHeight: "1.2",
-          }}
-        >
-          Connect, Support, and <span style={{ color: "#2563eb" }}>Grow Together</span>
-        </h2>
-
-        <p
-          style={{
-            fontSize: "1.25rem",
-            color: "#6b7280",
-            marginBottom: "2rem",
-            maxWidth: "48rem",
-            margin: "0 auto 2rem auto",
-            lineHeight: "1.6",
-          }}
-        >
-          Join meaningful helping circles where people support each other's goals, share resources, and build lasting
-          connections. Create positive change in your community and beyond.
-        </p>
-
         <div
           style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "1rem",
-            marginBottom: "4rem",
-            flexWrap: "wrap",
+            background: "linear-gradient(135deg, #f0f9ff 0%, #faf5ff 100%)",
+            padding: "2rem",
+            borderRadius: "1rem",
+            marginBottom: "2rem",
           }}
         >
-          <button
-            style={{
-              background: "linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)",
-              color: "white",
-              padding: "0.75rem 2rem",
-              border: "none",
-              borderRadius: "0.5rem",
-              fontSize: "1.125rem",
-              fontWeight: "500",
-              cursor: "pointer",
-              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-              transition: "transform 0.2s ease",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)"
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = "translateY(0)"
-            }}
-          >
-            🚀 Start Your Circle
-          </button>
-          <button
-            style={{
-              background: "transparent",
-              color: "#374151",
-              padding: "0.75rem 2rem",
-              border: "2px solid #d1d5db",
-              borderRadius: "0.5rem",
-              fontSize: "1.125rem",
-              fontWeight: "500",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = "#f9fafb"
-              e.currentTarget.style.borderColor = "#9ca3af"
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = "transparent"
-              e.currentTarget.style.borderColor = "#d1d5db"
-            }}
-          >
-            🔍 Browse Circles
-          </button>
+          <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", color: "#1f2937" }}>
+            Connect, Support, and Grow Together
+          </h2>
+          <p style={{ color: "#6b7280", lineHeight: "1.6" }}>
+            Join meaningful helping circles where people support each other's goals, share resources, and build lasting
+            connections.
+          </p>
         </div>
 
-        {/* Stats Section */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-            gap: "2rem",
-            marginTop: "4rem",
-          }}
-        >
-          <div style={{ textAlign: "center" }}>
-            <div
-              style={{
-                background: "linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)",
-                width: "4rem",
-                height: "4rem",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 1rem auto",
-                fontSize: "1.5rem",
-                boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-              }}
-            >
-              👥
-            </div>
-            <h3 style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "0.5rem", color: "#1f2937" }}>10,000+</h3>
-            <p style={{ color: "#6b7280", margin: 0 }}>Active Members</p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
+          <div style={{ background: "#dbeafe", padding: "1.5rem", borderRadius: "0.5rem", textAlign: "center" }}>
+            <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>👥</div>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#1f2937" }}>10,000+ Members</h3>
           </div>
 
-          <div style={{ textAlign: "center" }}>
-            <div
-              style={{
-                background: "linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)",
-                width: "4rem",
-                height: "4rem",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 1rem auto",
-                fontSize: "1.5rem",
-                boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-              }}
-            >
-              ❤️
-            </div>
-            <h3 style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "0.5rem", color: "#1f2937" }}>500+</h3>
-            <p style={{ color: "#6b7280", margin: 0 }}>Active Circles</p>
+          <div style={{ background: "#f3e8ff", padding: "1.5rem", borderRadius: "0.5rem", textAlign: "center" }}>
+            <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>❤️</div>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#1f2937" }}>500+ Circles</h3>
           </div>
 
-          <div style={{ textAlign: "center" }}>
-            <div
-              style={{
-                background: "linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%)",
-                width: "4rem",
-                height: "4rem",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 1rem auto",
-                fontSize: "1.5rem",
-                boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-              }}
-            >
-              🌍
-            </div>
-            <h3 style={{ fontSize: "1.5rem", fontWeight: "600", marginBottom: "0.5rem", color: "#1f2937" }}>50+</h3>
-            <p style={{ color: "#6b7280", margin: 0 }}>Countries</p>
+          <div style={{ background: "#dcfce7", padding: "1.5rem", borderRadius: "0.5rem", textAlign: "center" }}>
+            <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🌍</div>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#1f2937" }}>50+ Countries</h3>
           </div>
         </div>
 
