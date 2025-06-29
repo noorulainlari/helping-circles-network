@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Heart, Menu } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export function Header() {
   return (
@@ -28,11 +29,11 @@ export function Header() {
           </nav>
 
           <div className="hidden md:flex items-center space-x-4">
-            <Link href="/signin" className="text-gray-700 hover:text-gray-900 px-4 py-2">
-              Sign In
+            <Link href="/signin">
+              <Button variant="ghost">Sign In</Button>
             </Link>
-            <Link href="/signup" className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-              Get Started
+            <Link href="/signup">
+              <Button>Get Started</Button>
             </Link>
           </div>
 

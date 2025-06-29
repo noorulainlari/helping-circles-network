@@ -1,5 +1,6 @@
 import { ArrowRight, Users, Heart, Globe } from "lucide-react"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 export function Hero() {
   return (
@@ -29,18 +30,19 @@ export function Hero() {
           </p>
 
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Link
-              href="/signup"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-md font-medium inline-flex items-center"
-            >
-              Start Your Circle
-              <ArrowRight className="ml-2 h-4 w-4" />
+            <Link href="/signup">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                Start Your Circle
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
             </Link>
-            <Link
-              href="/circles"
-              className="border border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-md font-medium"
-            >
-              Browse Circles
+            <Link href="/circles">
+              <Button variant="outline" size="lg">
+                Browse Circles
+              </Button>
             </Link>
           </div>
 
