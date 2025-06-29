@@ -44,6 +44,22 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "4rem 1rem", textAlign: "center" }}>
+        <h1 style={{ fontSize: "2rem", fontWeight: "bold", color: "#1f2937", marginBottom: "1rem" }}>
+          Helping Circles Network
+        </h1>
+        <p
+          style={{
+            fontSize: "1.25rem",
+            color: "#6b7280",
+            marginBottom: "2rem",
+            maxWidth: "48rem",
+            margin: "0 auto 2rem auto",
+            lineHeight: "1.6",
+          }}
+        >
+          Welcome to our community platform!
+        </p>
+
         <h2
           style={{
             fontSize: "clamp(2rem, 5vw, 3.5rem)",
