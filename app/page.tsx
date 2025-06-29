@@ -2,14 +2,44 @@
 
 export default function HomePage() {
   return (
-    <div
-      style={{
-        padding: "2rem",
-        fontFamily: "system-ui, sans-serif",
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #f0f9ff 0%, #faf5ff 100%)",
-      }}
-    >
+    <div style={{ padding: "2rem", fontFamily: "system-ui, sans-serif" }}>
+      <h1 style={{ color: "#2563eb", fontSize: "2rem", marginBottom: "1rem" }}>🤝 Helping Circles Network</h1>
+      <p style={{ color: "#6b7280", fontSize: "1.125rem", marginBottom: "2rem" }}>Welcome to our community platform!</p>
+
+      <div
+        style={{
+          background: "linear-gradient(135deg, #f0f9ff 0%, #faf5ff 100%)",
+          padding: "2rem",
+          borderRadius: "1rem",
+          marginBottom: "2rem",
+        }}
+      >
+        <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", color: "#1f2937" }}>
+          Connect, Support, and Grow Together
+        </h2>
+        <p style={{ color: "#6b7280", lineHeight: "1.6" }}>
+          Join meaningful helping circles where people support each other's goals, share resources, and build lasting
+          connections.
+        </p>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
+        <div style={{ background: "#dbeafe", padding: "1.5rem", borderRadius: "0.5rem", textAlign: "center" }}>
+          <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>👥</div>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#1f2937" }}>10,000+ Members</h3>
+        </div>
+
+        <div style={{ background: "#f3e8ff", padding: "1.5rem", borderRadius: "0.5rem", textAlign: "center" }}>
+          <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>❤️</div>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#1f2937" }}>500+ Circles</h3>
+        </div>
+
+        <div style={{ background: "#dcfce7", padding: "1.5rem", borderRadius: "0.5rem", textAlign: "center" }}>
+          <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🌍</div>
+          <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#1f2937" }}>50+ Countries</h3>
+        </div>
+      </div>
+
       {/* Header */}
       <header style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", padding: "1rem 0" }}>
         <div
@@ -51,51 +81,6 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main style={{ maxWidth: "1200px", margin: "0 auto", padding: "4rem 1rem", textAlign: "center" }}>
-        <h1 style={{ color: "#2563eb", fontSize: "2rem", marginBottom: "1rem" }}>🤝 Helping Circles Network</h1>
-        <p
-          style={{
-            color: "#6b7280",
-            fontSize: "1.125rem",
-            marginBottom: "2rem",
-          }}
-        >
-          Welcome to our community platform!
-        </p>
-
-        <div
-          style={{
-            background: "linear-gradient(135deg, #f0f9ff 0%, #faf5ff 100%)",
-            padding: "2rem",
-            borderRadius: "1rem",
-            marginBottom: "2rem",
-          }}
-        >
-          <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem", color: "#1f2937" }}>
-            Connect, Support, and Grow Together
-          </h2>
-          <p style={{ color: "#6b7280", lineHeight: "1.6" }}>
-            Join meaningful helping circles where people support each other's goals, share resources, and build lasting
-            connections.
-          </p>
-        </div>
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
-          <div style={{ background: "#dbeafe", padding: "1.5rem", borderRadius: "0.5rem", textAlign: "center" }}>
-            <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>👥</div>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#1f2937" }}>10,000+ Members</h3>
-          </div>
-
-          <div style={{ background: "#f3e8ff", padding: "1.5rem", borderRadius: "0.5rem", textAlign: "center" }}>
-            <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>❤️</div>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#1f2937" }}>500+ Circles</h3>
-          </div>
-
-          <div style={{ background: "#dcfce7", padding: "1.5rem", borderRadius: "0.5rem", textAlign: "center" }}>
-            <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🌍</div>
-            <h3 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#1f2937" }}>50+ Countries</h3>
-          </div>
-        </div>
-
         {/* Features Section */}
         <div style={{ marginTop: "6rem" }}>
           <h3
