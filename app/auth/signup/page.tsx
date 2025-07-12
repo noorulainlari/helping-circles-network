@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { createClient } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
@@ -13,44 +12,43 @@ import { Heart } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
-export default function SignInPage() {
+export default function SignUpPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [fullName, setFullName] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
   const router = useRouter()
   const supabase = createClient()
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError("")
+    setSuccess("")
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+        emailRedirectTo: `${window.location.origin}/circles`,
+      },
     })
 
     if (error) {
       setError(error.message)
     } else {
-      // Check if user is admin and redirect accordingly
-      const { data: roleData } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", (await supabase.auth.getUser()).data.user?.id)
-        .single()
-
-      if (roleData?.role === "admin") {
-        router.push("/admin")
-      } else {
-        router.push("/circles")
-      }
+      setSuccess("Check your email for the confirmation link!")
+      setTimeout(() => router.push("/auth/signin"), 2000)
     }
     setLoading(false)
   }
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignUp = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -72,11 +70,22 @@ export default function SignInPage() {
               <Heart className="h-6 w-6 text-white" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-          <CardDescription>Sign in to your Helping Circles account</CardDescription>
+          <CardTitle className="text-2xl font-bold">Create your account</CardTitle>
+          <CardDescription>Join the Helping Circles community</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSignIn} className="space-y-4">
+          <form onSubmit={handleSignUp} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="fullName">Full Name</Label>
+              <Input
+                id="fullName"
+                type="text"
+                placeholder="Enter your full name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -93,10 +102,11 @@ export default function SignInPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Create a password (min 6 characters)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6}
               />
             </div>
             {error && (
@@ -104,8 +114,13 @@ export default function SignInPage() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
+            {success && (
+              <Alert>
+                <AlertDescription>{success}</AlertDescription>
+              </Alert>
+            )}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Creating account..." : "Sign Up"}
             </Button>
           </form>
 
@@ -119,7 +134,7 @@ export default function SignInPage() {
               </div>
             </div>
 
-            <Button variant="outline" className="w-full mt-4 bg-transparent" onClick={handleGoogleSignIn}>
+            <Button variant="outline" className="w-full mt-4 bg-transparent" onClick={handleGoogleSignUp}>
               <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
@@ -144,28 +159,17 @@ export default function SignInPage() {
 
           <div className="mt-6 text-center space-y-2">
             <p className="text-sm text-gray-600">
-              Don't have an account?{" "}
-              <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-500">
-                Sign up
+              Already have an account?{" "}
+              <Link href="/auth/signin" className="font-medium text-blue-600 hover:text-blue-500">
+                Sign in
               </Link>
             </p>
-            <div className="text-sm text-gray-600">
-              <p className="mb-2">Demo Logins:</p>
-              <div className="space-y-1">
-                <p>
-                  <strong>Admin:</strong>{" "}
-                  <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
-                    admin@demo.com / admin123
-                  </span>
-                </p>
-                <p>
-                  <strong>User:</strong>{" "}
-                  <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
-                    user@demo.com / user123
-                  </span>
-                </p>
-              </div>
-            </div>
+            <p className="text-sm text-gray-600">
+              Demo Login:{" "}
+              <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">
+                admin@demo.com / admin123
+              </span>
+            </p>
           </div>
         </CardContent>
       </Card>
