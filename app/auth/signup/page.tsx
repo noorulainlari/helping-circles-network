@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import { createClient } from "@/lib/supabase"
+import { supabase } from "@/src/integrations/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -20,7 +20,6 @@ export default function SignUpPage() {
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const router = useRouter()
-  const supabase = createClient()
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()

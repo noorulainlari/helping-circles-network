@@ -1,4 +1,12 @@
 import type React from "react"
+import './globals.css'
+import { AuthProvider } from "../components/providers/auth-provider"
+
+export const metadata = {
+  title: 'Helping Circles Network',
+  description: 'Connect, Support, and Build Community Together',
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -6,14 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   )
 }
-
-
-import './globals.css'
-
-export const metadata = {
-      generator: 'v0.dev'
-    };

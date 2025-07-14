@@ -1,6 +1,34 @@
 "use client"
 
+import { useAuth } from "@/components/providers/auth-provider"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+import { Button } from "@/components/ui/button"
+
 export default function CirclesPage() {
+  const { user, loading, signOut } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/auth/signin")
+    }
+  }, [user, loading, router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading circles...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null
+  }
   const circles = [
     {
       name: "Tech Innovators",
@@ -55,28 +83,22 @@ export default function CirclesPage() {
   return (
     <div style={{ minHeight: "100vh", background: "#f9fafb" }}>
       {/* Header */}
-      <header style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", padding: "1rem 0" }}>
-        <div
-          style={{
-            maxWidth: "1200px",
-            margin: "0 auto",
-            padding: "0 1rem",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <a href="/" style={{ textDecoration: "none" }}>
-            <h1 style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#1f2937", margin: 0 }}>🤝 Helping Circles</h1>
-          </a>
-          <nav style={{ display: "flex", gap: "2rem", alignItems: "center" }}>
-            <a href="/" style={{ color: "#6b7280", textDecoration: "none" }}>
-              Home
-            </a>
-            <a href="/about" style={{ color: "#6b7280", textDecoration: "none" }}>
-              About
-            </a>
-          </nav>
+      <header className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">🤝 Helping Circles</h1>
+              <p className="text-gray-600">Welcome back, {user.email}</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <Button onClick={() => router.push("/admin")} variant="outline">
+                Admin Panel
+              </Button>
+              <Button onClick={signOut} variant="outline">
+                Sign Out
+              </Button>
+            </div>
+          </div>
         </div>
       </header>
 

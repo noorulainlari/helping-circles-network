@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { createClient } from "@/lib/supabase"
+import { supabase } from "@/src/integrations/supabase/client"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -28,7 +28,6 @@ export default function AdminDashboard() {
     totalEvents: 0
   })
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
     checkAuth()
